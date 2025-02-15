@@ -1,8 +1,9 @@
-package pi_4se3.backend.entities;
+package tn.esprit.tic.se.spr01.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
 
 import java.io.Serializable;
 import java.time.LocalDate;

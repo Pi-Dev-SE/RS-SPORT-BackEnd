@@ -8,11 +8,13 @@
         <version>3.4.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>pi_4se3</groupId>
-    <artifactId>backend</artifactId>
+    <groupId>tn.esprit.tic.se</groupId>
+    <artifactId>SPR01</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>backend</name>
-    <description>backend</description>
+    <name>SPR01</name>
+    <description>SPR01</description>
+
+
     <url/>
     <licenses>
         <license/>
@@ -54,6 +56,8 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+
     </dependencies>
 
     <build>
