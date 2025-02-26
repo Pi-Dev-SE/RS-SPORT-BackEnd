@@ -22,9 +22,9 @@ public interface iTacticsBoardService {
     PlayerIcon addPlayer(PlayerIcon player, Long tacticsBoardId);
     void updateFormation(Long tacticsBoardId, Map<String, Position> formation);
 
-    void setAwayTeam(Long tacticsBoardId, Long teamId);
-
-    void setHomeTeam(Long tacticsBoardId, Long teamId);
+//    void setAwayTeam(Long tacticsBoardId, Long teamId);
+//
+//    void setHomeTeam(Long tacticsBoardId, Long teamId);
 
     void addPlayerToTacticsBoard(Long tacticsBoardId, Long playerId);
 

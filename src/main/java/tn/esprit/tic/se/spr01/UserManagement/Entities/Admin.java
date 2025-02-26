@@ -12,6 +12,9 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+
+
+
 @DiscriminatorValue("ADMIN")
 public class Admin extends User implements Serializable {
     private String department;  // Département de l'administrateur (ex: "RH", "IT")

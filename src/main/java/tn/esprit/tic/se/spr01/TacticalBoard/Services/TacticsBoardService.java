@@ -15,8 +15,7 @@ import tn.esprit.tic.se.spr01.UserManagement.Repositories.CoachRepository;
 import tn.esprit.tic.se.spr01.TacticalBoard.Repositories.TacticsBoardRepository;
 import tn.esprit.tic.se.spr01.UserManagement.Entities.Coach;
 import tn.esprit.tic.se.spr01.UserManagement.Repositories.PlayerRepository;
-import tn.esprit.tic.se.spr01.entities.Team;
-import tn.esprit.tic.se.spr01.repositories.TeamRepository;
+
 
 import java.time.LocalDate;
 import java.util.List;
@@ -25,8 +24,8 @@ import java.util.Map;
 @Service
 @Slf4j
 public class TacticsBoardService implements iTacticsBoardService{
-    @Autowired
-    private TeamRepository teamRepository;
+//    @Autowired
+//    private TeamRepository teamRepository;
 
     @Autowired
     PlayerIconRepository playerRepository;
@@ -99,20 +98,20 @@ public class TacticsBoardService implements iTacticsBoardService{
         tacticsBoard.addPlayer(player);
         tacticsBoardRepository.save(tacticsBoard);
     }
-    @Override
-    public void setHomeTeam(Long tacticsBoardId, Long teamId) {
-        TacticsBoard tacticsBoard = tacticsBoardRepository.findById(tacticsBoardId).orElseThrow(() -> new RuntimeException("TacticsBoard not found"));
-        Team team = teamRepository.findById(teamId).orElseThrow(() -> new RuntimeException("Team not found"));
-        tacticsBoard.setHomeTeam(team);
-        tacticsBoardRepository.save(tacticsBoard);
-    }
-    @Override
-    public void setAwayTeam(Long tacticsBoardId, Long teamId) {
-        TacticsBoard tacticsBoard = tacticsBoardRepository.findById(tacticsBoardId).orElseThrow(() -> new RuntimeException("TacticsBoard not found"));
-        Team team = teamRepository.findById(teamId).orElseThrow(() -> new RuntimeException("Team not found"));
-        tacticsBoard.setAwayTeam(team);
-        tacticsBoardRepository.save(tacticsBoard);
-    }
+//    @Override
+//    public void setHomeTeam(Long tacticsBoardId, Long teamId) {
+//        TacticsBoard tacticsBoard = tacticsBoardRepository.findById(tacticsBoardId).orElseThrow(() -> new RuntimeException("TacticsBoard not found"));
+//        Team team = teamRepository.findById(teamId).orElseThrow(() -> new RuntimeException("Team not found"));
+//        tacticsBoard.setHomeTeam(team);
+//        tacticsBoardRepository.save(tacticsBoard);
+//    }
+//    @Override
+//    public void setAwayTeam(Long tacticsBoardId, Long teamId) {
+//        TacticsBoard tacticsBoard = tacticsBoardRepository.findById(tacticsBoardId).orElseThrow(() -> new RuntimeException("TacticsBoard not found"));
+//        Team team = teamRepository.findById(teamId).orElseThrow(() -> new RuntimeException("Team not found"));
+//        tacticsBoard.setAwayTeam(team);
+//        tacticsBoardRepository.save(tacticsBoard);
+//    }
     @Override
     public void updateFormation(Long tacticsBoardId, Map<String, Position> formation) {
         TacticsBoard tacticsBoard = tacticsBoardRepository.findById(tacticsBoardId).orElseThrow(() -> new RuntimeException("TacticsBoard not found"));

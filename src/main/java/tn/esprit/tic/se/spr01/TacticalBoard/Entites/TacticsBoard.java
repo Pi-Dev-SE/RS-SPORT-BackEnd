@@ -5,9 +5,10 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import tn.esprit.tic.se.spr01.TeamandPlayer.entities.Team;
 import tn.esprit.tic.se.spr01.UserManagement.Entities.Coach;
 import tn.esprit.tic.se.spr01.UserManagement.Entities.Player;
-import tn.esprit.tic.se.spr01.entities.Team;
+
 
 import java.io.Serializable;
 import java.time.LocalDate;
