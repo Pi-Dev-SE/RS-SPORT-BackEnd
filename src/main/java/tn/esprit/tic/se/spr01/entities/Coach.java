@@ -9,11 +9,13 @@ import java.io.Serializable;
 
 @Getter
 @Setter
-@Builder
+
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="coach")
+
+
 @DiscriminatorValue("COACH")
 public class Coach extends User implements Serializable {
     private String specialization;

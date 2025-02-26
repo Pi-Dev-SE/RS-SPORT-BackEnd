@@ -1,24 +1,37 @@
 package tn.esprit.tic.se.spr01.entities;
 
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
+import tn.esprit.tic.se.spr01.SessionAndExercice.entities.AbsentPlayer;
+import tn.esprit.tic.se.spr01.health.entities.HealthReport;
+import tn.esprit.tic.se.spr01.health.entities.TypeStatusHealth;
+
 
 import java.io.Serializable;
 import java.util.List;
 
 @Getter
 @Setter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="player")
+
 @DiscriminatorValue("PLAYER")
-public class Player  extends User implements Serializable {
-    private String position;       // Position du joueur (ex: "Attaquant", "Défenseur")
-    private Integer jerseyNumber; // Numéro de maillot du joueur
-    private String healthStatus;
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+
+public class Player  extends User {
+    private String position;
+    private Integer jerseyNumber;
+    @Enumerated(EnumType.STRING)
+    private TypeStatusHealth healthStatus;
+    @OneToOne(fetch = FetchType.LAZY)
+    HealthReport healthReport;
+
 
     @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<AbsentPlayer> absences;
+
 }

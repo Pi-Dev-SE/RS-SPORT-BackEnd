@@ -2,6 +2,9 @@ package tn.esprit.tic.se.spr01.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import lombok.experimental.SuperBuilder;
+
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -17,7 +20,9 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
-@Builder
+@SuperBuilder
+
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name="user")
@@ -28,7 +33,8 @@ import java.util.stream.Collectors;
 public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer Id;
+    private Long Id;
+
     private String firstname;
     private String lastname;
     @Column(unique=true)
@@ -37,7 +43,6 @@ public class User implements Serializable {
     private LocalDate dateOfBirth;
     private boolean enabled;
     private boolean accountLocked;
-
 
 
 }
