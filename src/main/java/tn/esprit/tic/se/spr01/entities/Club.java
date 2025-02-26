@@ -14,8 +14,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Builder
-@RequiredArgsConstructor
+
 public class Club implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -7,11 +7,9 @@ import java.io.Serializable;
 import java.util.Set;
 @Getter
 @Setter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="exercise")
 public class Exercises implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,7 +17,7 @@ public class Exercises implements Serializable {
     private String name;
 
     @Enumerated(EnumType.STRING)
-    private String ExerciseType ;
+    private ExercisesType exercisesType ;
     private String description;
 
     @ManyToMany(mappedBy = "exercises")

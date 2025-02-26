@@ -14,8 +14,7 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@RequiredArgsConstructor
+
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RecoveryRegime implements Serializable {
 

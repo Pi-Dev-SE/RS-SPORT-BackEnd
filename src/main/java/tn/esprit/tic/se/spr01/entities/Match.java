@@ -15,13 +15,12 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Builder
-@RequiredArgsConstructor
+
 public class Match implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int matchId;
-    Date matchDate;
+    Integer matchId;
+    LocalDate matchDate;
     String status;
 
 

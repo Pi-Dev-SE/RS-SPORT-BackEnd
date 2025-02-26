@@ -10,11 +10,11 @@ import java.util.List;
 import java.util.Set;
 @Getter
 @Setter
-@Builder
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="session")
+
 public class Session implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

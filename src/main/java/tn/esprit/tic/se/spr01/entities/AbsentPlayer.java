@@ -2,16 +2,15 @@ package tn.esprit.tic.se.spr01.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import tn.esprit.tic.se.spr01.UserManagement.Entities.Player;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 @Getter
 @Setter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="absentPlayer")
 public class AbsentPlayer implements Serializable {
 
     @Id
