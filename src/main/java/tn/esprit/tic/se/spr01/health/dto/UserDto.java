@@ -2,7 +2,7 @@ package tn.esprit.tic.se.spr01.health.dto;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import tn.esprit.tic.se.spr01.entities.User;
+import tn.esprit.tic.se.spr01.UserManagement.Entities.User;
 
 @Getter
 @Setter

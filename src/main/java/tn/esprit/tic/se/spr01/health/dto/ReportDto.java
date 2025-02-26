@@ -2,7 +2,7 @@ package tn.esprit.tic.se.spr01.health.dto;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import tn.esprit.tic.se.spr01.entities.MedicalStaff;
+
 import tn.esprit.tic.se.spr01.health.entities.HealthReport;
 import tn.esprit.tic.se.spr01.health.entities.TypeInjurySeverity;
 import tn.esprit.tic.se.spr01.health.entities.TypeStatusHealth;
