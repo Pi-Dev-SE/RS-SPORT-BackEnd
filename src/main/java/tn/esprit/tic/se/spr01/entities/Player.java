@@ -1,5 +1,6 @@
 package tn.esprit.tic.se.spr01.entities;
 
+
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
@@ -7,6 +8,7 @@ import lombok.*;
 import tn.esprit.tic.se.spr01.SessionAndExercice.entities.AbsentPlayer;
 import tn.esprit.tic.se.spr01.health.entities.HealthReport;
 import tn.esprit.tic.se.spr01.health.entities.TypeStatusHealth;
+
 
 import java.io.Serializable;
 import java.util.List;
@@ -27,4 +29,9 @@ public class Player  extends User {
     private TypeStatusHealth healthStatus;
     @OneToOne(fetch = FetchType.LAZY)
     HealthReport healthReport;
+
+
+    @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<AbsentPlayer> absences;
+
 }

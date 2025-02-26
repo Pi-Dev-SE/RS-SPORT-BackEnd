@@ -10,9 +10,11 @@ import java.io.Serializable;
 @Getter
 @Setter
 
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+
 
 @DiscriminatorValue("COACH")
 public class Coach extends User implements Serializable {
