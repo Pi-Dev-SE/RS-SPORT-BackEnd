@@ -1,0 +1,165 @@
+package tn.esprit.tic.se.spr01.TacticalBoard.Services;
+
+import jakarta.persistence.EntityNotFoundException;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import tn.esprit.tic.se.spr01.TacticalBoard.DTO.TacticsBoardDto;
+import tn.esprit.tic.se.spr01.TacticalBoard.Entites.PlayerIcon;
+import tn.esprit.tic.se.spr01.TacticalBoard.Entites.Position;
+import tn.esprit.tic.se.spr01.TacticalBoard.Entites.TacticsBoard;
+import tn.esprit.tic.se.spr01.TacticalBoard.Repositories.PlayerIconRepository;
+import tn.esprit.tic.se.spr01.UserManagement.Entities.Player;
+import tn.esprit.tic.se.spr01.UserManagement.Repositories.CoachRepository;
+import tn.esprit.tic.se.spr01.TacticalBoard.Repositories.TacticsBoardRepository;
+import tn.esprit.tic.se.spr01.UserManagement.Entities.Coach;
+import tn.esprit.tic.se.spr01.UserManagement.Repositories.PlayerRepository;
+
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+
+@Service
+@Slf4j
+public class TacticsBoardService implements iTacticsBoardService{
+//    @Autowired
+//    private TeamRepository teamRepository;
+
+    @Autowired
+    PlayerIconRepository playerRepository;
+
+    @Autowired
+    TacticsBoardRepository tacticsBoardRepository;
+
+    @Autowired
+    CoachRepository coachRepository;
+
+    @Override
+    public TacticsBoard addBoard(TacticsBoardDto dto) {
+//        Coach coach = coachRepository.findById(dto.coachId())
+//                .orElseThrow(() -> new EntityNotFoundException("Coach not found with id: " + dto.coachId()));
+
+        TacticsBoard board = new TacticsBoard();
+        board.setName(dto.name());
+
+        // Set createdAt to current date if not provided
+        board.setCreatedAt(dto.createdAt() != null ? dto.createdAt() : LocalDate.now());
+//        board.setCoach(coach);
+
+        return tacticsBoardRepository.save(board);
+    }
+
+    @Override
+    public TacticsBoard getBoardById(Long id) {
+        return tacticsBoardRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("TacticsBoard not found with id: " + id));
+    }
+
+    public List<TacticsBoard> getAllBoard() {
+        return tacticsBoardRepository.findAll();
+    }
+
+    @Override
+    public List<TacticsBoard> getBoardByDateRange(LocalDate startDate, LocalDate endDate) {
+        return tacticsBoardRepository.findByCreatedAtBetween(startDate, endDate);
+    }
+
+    @Override
+    public TacticsBoard updateBoard(Long id, TacticsBoardDto dto) {
+        TacticsBoard existingBoard = tacticsBoardRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("TacticsBoard not found with id: " + id));
+
+//        Coach coach = coachRepository.findById(dto.coachId())
+//                .orElseThrow(() -> new EntityNotFoundException("Coach not found with id: " + dto.coachId()));
+
+        existingBoard.setName(dto.name());
+
+        existingBoard.setCreatedAt(dto.createdAt());
+//        existingBoard.setCoach(coach);
+
+
+        return tacticsBoardRepository.save(existingBoard);
+    }
+    @Override
+    public void deleteBoard(Long id) {
+        if (!tacticsBoardRepository.existsById(id)) {
+            throw new EntityNotFoundException("TacticsBoard not found with id: " + id);
+        }
+        tacticsBoardRepository.deleteById(id);
+    }
+
+
+    @Override
+    public void addPlayerToTacticsBoard(Long tacticsBoardId, Long playerId) {
+        TacticsBoard tacticsBoard = tacticsBoardRepository.findById(tacticsBoardId).orElseThrow(() -> new RuntimeException("TacticsBoard not found"));
+        PlayerIcon player = playerRepository.findById(playerId).orElseThrow(() -> new RuntimeException("Player not found"));
+        tacticsBoard.addPlayer(player);
+        tacticsBoardRepository.save(tacticsBoard);
+    }
+//    @Override
+//    public void setHomeTeam(Long tacticsBoardId, Long teamId) {
+//        TacticsBoard tacticsBoard = tacticsBoardRepository.findById(tacticsBoardId).orElseThrow(() -> new RuntimeException("TacticsBoard not found"));
+//        Team team = teamRepository.findById(teamId).orElseThrow(() -> new RuntimeException("Team not found"));
+//        tacticsBoard.setHomeTeam(team);
+//        tacticsBoardRepository.save(tacticsBoard);
+//    }
+//    @Override
+//    public void setAwayTeam(Long tacticsBoardId, Long teamId) {
+//        TacticsBoard tacticsBoard = tacticsBoardRepository.findById(tacticsBoardId).orElseThrow(() -> new RuntimeException("TacticsBoard not found"));
+//        Team team = teamRepository.findById(teamId).orElseThrow(() -> new RuntimeException("Team not found"));
+//        tacticsBoard.setAwayTeam(team);
+//        tacticsBoardRepository.save(tacticsBoard);
+//    }
+    @Override
+    public void updateFormation(Long tacticsBoardId, Map<String, Position> formation) {
+        TacticsBoard tacticsBoard = tacticsBoardRepository.findById(tacticsBoardId).orElseThrow(() -> new RuntimeException("TacticsBoard not found"));
+        tacticsBoard.setFormation(formation);
+        tacticsBoardRepository.save(tacticsBoard);
+    }
+    @Override
+    public PlayerIcon addPlayer(PlayerIcon player, Long tacticsBoardId) {
+        TacticsBoard tacticsBoard = tacticsBoardRepository.findById(tacticsBoardId)
+                .orElseThrow(() -> new RuntimeException("TacticsBoard not found"));
+        player.setTacticsBoard(tacticsBoard);
+        tacticsBoard.addPlayer(player);
+        return playerRepository.save(player);
+    }
+
+    @Override
+    public List<PlayerIcon> getPlayersByTacticsBoard(Long tacticsBoardId) {
+        TacticsBoard tacticsBoard = tacticsBoardRepository.findById(tacticsBoardId)
+                .orElseThrow(() -> new RuntimeException("TacticsBoard not found"));
+        return playerRepository.findByTacticsBoard(tacticsBoard);
+    }
+
+    @Override
+    public void deletePlayer(Long playerId, Long tacticsBoardId) {
+        TacticsBoard tacticsBoard = tacticsBoardRepository.findById(tacticsBoardId)
+                .orElseThrow(() -> new RuntimeException("TacticsBoard not found"));
+        PlayerIcon player = playerRepository.findById(playerId)
+                .orElseThrow(() -> new RuntimeException("Player not found"));
+        tacticsBoard.getPlayers().remove(player);
+        playerRepository.delete(player);
+        tacticsBoardRepository.save(tacticsBoard);
+    }
+
+    @Override
+    public PlayerIcon updatePlayer(PlayerIcon player, Long tacticsBoardId) {
+        TacticsBoard tacticsBoard = tacticsBoardRepository.findById(tacticsBoardId)
+                .orElseThrow(() -> new RuntimeException("TacticsBoard not found"));
+        PlayerIcon existingPlayer = playerRepository.findById(player.getIdIcon())
+                .orElseThrow(() -> new RuntimeException("Player not found"));
+
+        existingPlayer.setJerseyNumber(player.getJerseyNumber());
+        existingPlayer.setJerseyColor(player.getJerseyColor());
+//        existingPlayer.setPositionX(player.getPositionX());
+//        existingPlayer.setPositionY(player.getPositionY());
+        existingPlayer.setRole(player.getRole());
+        existingPlayer.setPosition(player.getPosition());
+//        existingPlayer.setTeam(player.getTeam());
+        existingPlayer.setTacticsBoard(tacticsBoard);
+        return playerRepository.save(existingPlayer);
+    }
+}

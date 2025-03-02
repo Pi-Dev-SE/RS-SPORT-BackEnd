@@ -1,4 +1,4 @@
-package pi_4se3.backend.exceptions;
+package tn.esprit.tic.se.spr01.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
