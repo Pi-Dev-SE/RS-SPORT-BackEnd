@@ -1,4 +1,4 @@
-package tn.esprit.tic.se.spr01.entities;
+package pi_4se3.backend.entities;
 
 public enum TypeStatusRegime {
 

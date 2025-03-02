@@ -1,7 +1,7 @@
-package tn.esprit.tic.se.spr01.repositories;
+package pi_4se3.backend.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import tn.esprit.tic.se.spr01.entities.RecoveryRegime;
+import pi_4se3.backend.entities.RecoveryRegime;
 
 public interface RepositoryRecoveryRegime extends JpaRepository<RecoveryRegime,Long> {
 }

@@ -1,25 +1,34 @@
-package tn.esprit.tic.se.spr01.entities;
+package pi_4se3.backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-
+import pi_4se3.backend.dto.ReportDto;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
-@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "healthId")  // 🔥 Nouvelle annotation
+
 public class HealthReport implements Serializable {
  @Id
  @GeneratedValue(strategy = GenerationType.IDENTITY)
- int healthId;
+ long healthId;
 
  String injuryType;
  @Enumerated(EnumType.STRING)
@@ -31,5 +40,31 @@ public class HealthReport implements Serializable {
  String medicalNotes;
  @Enumerated(EnumType.STRING)
  TypeStatusHealth status;
+ @OneToOne
+ RecoveryRegime recoveryRegime;
+ @ManyToOne
+ MedicalStaff medicalStaff;
+ @OneToMany(mappedBy = "healthReport",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+ @JsonIgnore
+ List<Player> players = new ArrayList<>() ;
+
+ public static HealthReport toEntity(ReportDto dto){
+
+   if(dto==null){
+    return null;
+   }else
+
+     return HealthReport.builder()
+           .healthId(dto.getHealthId())
+           .injuryType(dto.getInjuryType())
+           .injurySeverity(dto.getInjurySeverity())
+           .diagnosisDate(dto.getDiagnosisDate())
+           .expectedRecoveryDate(dto.getExpectedRecoveryDate())
+           .recoveryPlan(dto.getRecoveryPlan())
+           .fitnessLevel(dto.getFitnessLevel())
+           .medicalNotes(dto.getMedicalNotes())
+           .status(dto.getStatus())
+           .build();
+ }
 
 }

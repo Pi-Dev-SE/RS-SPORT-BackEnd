@@ -1,4 +1,4 @@
-package tn.esprit.tic.se.spr01.entities;
+package pi_4se3.backend.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -7,17 +7,15 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 
-import java.io.Serializable;
-import java.security.Principal;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
-@Builder
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name="user")
@@ -25,10 +23,10 @@ import java.util.stream.Collectors;
 @EntityListeners(AuditingEntityListener.class)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "dtype", discriminatorType = DiscriminatorType.STRING)
-public class User implements Serializable {
+public class User  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer Id;
+    private int id;
     private String firstname;
     private String lastname;
     @Column(unique=true)
@@ -37,15 +35,27 @@ public class User implements Serializable {
     private LocalDate dateOfBirth;
     private boolean enabled;
     private boolean accountLocked;
+    private String role;
+
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdDate;
+
+    @LastModifiedDate
+    @Column(insertable = false)
+    private LocalDateTime lastModifiedDate;
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 }
-
-
-
-
-
-
-
-

@@ -1,21 +1,34 @@
-package tn.esprit.tic.se.spr01.entities;
+package pi_4se3.backend.entities;
 
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
 @Getter
 @Setter
-@Builder
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="coach")
+
 @DiscriminatorValue("COACH")
 public class Coach extends User implements Serializable {
-    private String specialization;
-    private String licenseNumber;
+    private String specializationCoach;
+    private String diplome;
+
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+
+    Club club;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)  // This will apply to updates (not save)
+    @JoinColumn(name = "team_id", referencedColumnName = "teamId", nullable = true)
+    @JsonIgnore
+    private Team team;
 }

@@ -1,21 +1,26 @@
-package tn.esprit.tic.se.spr01.entities;
+package pi_4se3.backend.entities;
 
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="medicalStaff")
+
 @DiscriminatorValue("MEDICAL_STAFF")
-public class MedicalStaff extends User implements Serializable {
-    private String specialization;  // Spécialisation du personnel médical (ex: "Médecin", "Kinésithérapeute")
+public class MedicalStaff extends User {
+    private String specialization;
     private String licenseNumber;
+
+    @OneToMany(mappedBy = "medicalStaff",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    List<HealthReport> healthReportList = new ArrayList<>();
 }
