@@ -4,10 +4,14 @@ import tn.esprit.tic.se.spr01.TeamandPlayer.dto.TeamDto;
 
 import tn.esprit.tic.se.spr01.TeamandPlayer.entities.Team;
 
+import java.util.Optional;
+
 public interface ITeamService {
     public Team addTeam(Team team, int clubId);
     public TeamDto assignPlayerToTeam(Long playerId, int teamId);
     public TeamDto assignCoachToTeam(Long coachId, int teamId);
     public TeamDto removePlayerFromTeam(Long playerId, int teamId);
+
+    Optional<Team> findById(int id);
 }
 

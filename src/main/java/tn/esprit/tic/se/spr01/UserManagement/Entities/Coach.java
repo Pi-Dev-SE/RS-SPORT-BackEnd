@@ -3,6 +3,7 @@ package tn.esprit.tic.se.spr01.UserManagement.Entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import tn.esprit.tic.se.spr01.Exercises.Entities.Exercise;
 import tn.esprit.tic.se.spr01.TacticalBoard.Entites.TacticsBoard;
 import tn.esprit.tic.se.spr01.TeamandPlayer.entities.Club;
 import tn.esprit.tic.se.spr01.TeamandPlayer.entities.Team;
@@ -22,6 +23,9 @@ public class Coach extends User implements Serializable {
     private String diplome;
     @OneToMany(mappedBy = "coach")
     private Set<TacticsBoard> tacticsBoards;
+
+    @OneToMany(mappedBy = "coach", cascade = CascadeType.ALL)
+    private Set<Exercise> exercises ;
 
     @ManyToOne(fetch = FetchType.LAZY)
 

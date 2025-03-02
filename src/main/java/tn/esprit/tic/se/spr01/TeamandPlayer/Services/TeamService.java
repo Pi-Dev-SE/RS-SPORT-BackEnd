@@ -269,7 +269,9 @@ public class TeamService implements ITeamService {
 
 
 
-
+    public Optional<Team> findById(int id) {
+        return teamRepository.findById(id);
+    }
 
 
 
