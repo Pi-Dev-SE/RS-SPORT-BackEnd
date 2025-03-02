@@ -9,6 +9,8 @@ import lombok.*;
 import tn.esprit.tic.se.spr01.SessionAndExercice.entities.AbsentPlayer;
 import tn.esprit.tic.se.spr01.TacticalBoard.Entites.Position;
 import tn.esprit.tic.se.spr01.TacticalBoard.Entites.TacticsBoard;
+import tn.esprit.tic.se.spr01.TeamandPlayer.entities.Club;
+import tn.esprit.tic.se.spr01.TeamandPlayer.entities.Team;
 import tn.esprit.tic.se.spr01.UserManagement.Entities.User;
 
 import tn.esprit.tic.se.spr01.health.entities.HealthReport;
@@ -37,6 +39,16 @@ public class Player  extends User implements Serializable {
     @JsonIgnore
     private List<AbsentPlayer> absences;
 
+    @ManyToOne
+    @JsonIgnore
+
+    Club club;
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "team_id", referencedColumnName = "teamId", nullable = true)
+    @JsonIgnore
+    private Team team;
 
 
     public String getRole() {

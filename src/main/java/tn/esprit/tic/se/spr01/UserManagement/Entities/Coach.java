@@ -1,10 +1,11 @@
 package tn.esprit.tic.se.spr01.UserManagement.Entities;
 
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.*;
 import tn.esprit.tic.se.spr01.TacticalBoard.Entites.TacticsBoard;
+import tn.esprit.tic.se.spr01.TeamandPlayer.entities.Club;
+import tn.esprit.tic.se.spr01.TeamandPlayer.entities.Team;
 import tn.esprit.tic.se.spr01.UserManagement.Entities.User;
 
 import java.io.Serializable;
@@ -21,6 +22,15 @@ public class Coach extends User implements Serializable {
     private String diplome;
     @OneToMany(mappedBy = "coach")
     private Set<TacticsBoard> tacticsBoards;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+
+    Club club;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)  // This will apply to updates (not save)
+    @JoinColumn(name = "team_id", referencedColumnName = "teamId", nullable = true)
+    @JsonIgnore
+    private Team team;
 
     public String getSpecializationCoach() {
         return specializationCoach;

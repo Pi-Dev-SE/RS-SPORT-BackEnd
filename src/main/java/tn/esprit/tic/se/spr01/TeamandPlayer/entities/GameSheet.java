@@ -6,18 +6,18 @@ import lombok.experimental.FieldDefaults;
 
 
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
 @Setter
-
+@NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
-@RequiredArgsConstructor
-public class MatchSheet implements Serializable {
+
+public class GameSheet implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int matchSheetId;
@@ -27,7 +27,15 @@ public class MatchSheet implements Serializable {
     String fouls ;
     float notes ;
 
+    @ManyToOne
+    @JoinColumn(name = "home_team_id")
+    private Team homeTeam;
 
+    @ManyToOne
+    @JoinColumn(name = "away_team_id")
+    private Team awayTeam;
 
+    @OneToOne(mappedBy="gamesheet")
+    private Game match;
 
 }
