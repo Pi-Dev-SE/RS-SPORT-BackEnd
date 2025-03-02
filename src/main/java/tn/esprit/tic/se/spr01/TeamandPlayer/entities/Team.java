@@ -6,12 +6,16 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import tn.esprit.tic.se.spr01.Exercises.Entities.Exercise;
 import tn.esprit.tic.se.spr01.UserManagement.Entities.Coach;
 import tn.esprit.tic.se.spr01.UserManagement.Entities.Player;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 @Entity
 @Getter
 @Setter
@@ -45,6 +49,10 @@ public class Team implements Serializable {
     @OneToMany(mappedBy = "awayTeam", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<GameSheet> awayGames;
+
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    //@JsonIgnoreProperties("team") // Ignorer la propriété "team" dans Exercise pour éviter la récursion
+    private Set<Exercise> exercises = new HashSet<>();
 
 
     @OneToMany(cascade = CascadeType.ALL)

@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
-import tn.esprit.tic.se.spr01.SessionAndExercice.entities.AbsentPlayer;
+
 import tn.esprit.tic.se.spr01.TacticalBoard.Entites.Position;
 import tn.esprit.tic.se.spr01.TacticalBoard.Entites.TacticsBoard;
 import tn.esprit.tic.se.spr01.TeamandPlayer.entities.Club;
@@ -35,9 +35,7 @@ public class Player  extends User implements Serializable {
     @OneToOne(fetch = FetchType.LAZY)
     HealthReport healthReport;
 
-    @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore
-    private List<AbsentPlayer> absences;
+
 
     @ManyToOne
     @JsonIgnore

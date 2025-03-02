@@ -99,6 +99,12 @@ public Team addTeam(@RequestBody Team team, @PathVariable int clubId) {
     }
 
 
+    @GetMapping("/findById/{id}")
+    public ResponseEntity<Team> findById(@PathVariable("id") int id) {
+        return teamService.findById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 
 
 }
