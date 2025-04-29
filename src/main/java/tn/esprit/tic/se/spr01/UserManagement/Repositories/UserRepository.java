@@ -1,11 +1,14 @@
 package tn.esprit.tic.se.spr01.UserManagement.Repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import tn.esprit.tic.se.spr01.UserManagement.Entities.User;
+import tn.esprit.tic.se.spr01.UserManagement.Entities.Status;
 
-import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
+
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
@@ -13,5 +16,23 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findReceiverById(Long id);
 
     boolean existsByEmail(String email);
+    Optional<User> findByFirstname(String firstname);
+
+
+    List<User> findAllByStatus(Status status);
+    List<User> findTop20ByFirstnameContaining(String firstname);
+    List<User> findAllByFirstnameIn(List<String> firstnames);
+
+    @Query("SELECT u FROM User u WHERE u.firstname LIKE %:firstname% AND u.firstname NOT IN :firstnames")
+    List<User> findTop20ByFirstnameContainingAndFirstnameNotIn(String firstname, List<String> firstnames);
+
+    List<User> findTop20ByFirstnameContainingIgnoreCaseAndIdNotIn(
+            String firstname,
+            List<Long> excludedIds
+    );
+
+    List<User> findTop20ByFirstnameContainingIgnoreCase(String firstname);
+
+
 
 }

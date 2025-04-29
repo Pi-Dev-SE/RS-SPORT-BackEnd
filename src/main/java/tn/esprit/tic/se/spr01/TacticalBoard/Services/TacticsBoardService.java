@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import tn.esprit.tic.se.spr01.TacticalBoard.DTO.TacticsBoardDto;
 import tn.esprit.tic.se.spr01.TacticalBoard.Entites.PlayerIcon;
@@ -112,12 +113,12 @@ public class TacticsBoardService implements iTacticsBoardService{
 //        tacticsBoard.setAwayTeam(team);
 //        tacticsBoardRepository.save(tacticsBoard);
 //    }
-    @Override
-    public void updateFormation(Long tacticsBoardId, Map<String, Position> formation) {
-        TacticsBoard tacticsBoard = tacticsBoardRepository.findById(tacticsBoardId).orElseThrow(() -> new RuntimeException("TacticsBoard not found"));
-        tacticsBoard.setFormation(formation);
-        tacticsBoardRepository.save(tacticsBoard);
-    }
+//    @Override
+//    public void updateFormation(Long tacticsBoardId, Map<String, Position> formation) {
+//        TacticsBoard tacticsBoard = tacticsBoardRepository.findById(tacticsBoardId).orElseThrow(() -> new RuntimeException("TacticsBoard not found"));
+//        tacticsBoard.setFormation(formation);
+//        tacticsBoardRepository.save(tacticsBoard);
+//    }
     @Override
     public PlayerIcon addPlayer(PlayerIcon player, Long tacticsBoardId) {
         TacticsBoard tacticsBoard = tacticsBoardRepository.findById(tacticsBoardId)
@@ -152,14 +153,35 @@ public class TacticsBoardService implements iTacticsBoardService{
         PlayerIcon existingPlayer = playerRepository.findById(player.getIdIcon())
                 .orElseThrow(() -> new RuntimeException("Player not found"));
 
-        existingPlayer.setJerseyNumber(player.getJerseyNumber());
-        existingPlayer.setJerseyColor(player.getJerseyColor());
-//        existingPlayer.setPositionX(player.getPositionX());
-//        existingPlayer.setPositionY(player.getPositionY());
-        existingPlayer.setRole(player.getRole());
-        existingPlayer.setPosition(player.getPosition());
-//        existingPlayer.setTeam(player.getTeam());
+        if (player.getJerseyNumber() != null) {
+            existingPlayer.setJerseyNumber(player.getJerseyNumber());
+        }
+        if (player.getJerseyColor() != null) {
+            existingPlayer.setJerseyColor(player.getJerseyColor());
+        }
+        if (player.getRole() != null) {
+            existingPlayer.setRole(player.getRole());
+        }
+        if (player.getPosition() != null) {
+            existingPlayer.setPosition(player.getPosition());
+        }
         existingPlayer.setTacticsBoard(tacticsBoard);
         return playerRepository.save(existingPlayer);
     }
+
+//    @Scheduled(cron = "0 0 0 * * *")
+//    public void deleteEmptyTacticsBoards() {
+//        List<TacticsBoard> emptyBoards = tacticsBoardRepository.findEmptyBoards();
+//
+//        if (!emptyBoards.isEmpty()) {
+//            log.info("Suppression de {} Tactics Boards vides : {}",
+//                    emptyBoards.size(),
+//                    emptyBoards.stream().map(TacticsBoard::getIdTactic).toList());
+//            tacticsBoardRepository.deleteAll(emptyBoards);
+//        } else {
+//            log.info("Aucun Tactics Board vide à supprimer");
+//        }
+//    }
+
+
 }

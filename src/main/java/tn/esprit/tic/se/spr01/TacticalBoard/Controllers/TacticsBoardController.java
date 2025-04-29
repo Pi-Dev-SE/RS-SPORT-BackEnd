@@ -100,7 +100,7 @@ public class TacticsBoardController {
         }
     }
     @PutMapping("/players/update/{tacticsBoardId}")
-    public ResponseEntity<?> updatePlayer(@RequestBody PlayerIcon player, @PathVariable Long tacticsBoardId) {
+    public ResponseEntity<?> updatePlayer(@Valid @RequestBody PlayerIcon player, @PathVariable Long tacticsBoardId) {
         try {
             PlayerIcon updatedPlayer = tacticsBoardService.updatePlayer(player, tacticsBoardId);
             return ResponseEntity.ok(updatedPlayer);

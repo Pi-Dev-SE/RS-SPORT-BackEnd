@@ -1,5 +1,9 @@
 package tn.esprit.tic.se.spr01.UserManagement.Services;
 
+
+import org.springframework.web.multipart.MultipartFile;
+import tn.esprit.tic.se.spr01.UserManagement.DTO.UserDto;
+import tn.esprit.tic.se.spr01.UserManagement.Entities.Status;
 import tn.esprit.tic.se.spr01.UserManagement.Entities.User;
 
 import java.time.LocalDate;
@@ -12,4 +16,16 @@ public interface iUserService {
 
     User updateUser(Long id, User user);
     void deleteUser(Long id);
+
+    UserDto login(final UserDto userDTO);
+    void validatePassword(User user, String password);
+    User createUser(String firstname, String password);
+    UserDto connect(UserDto userDTO);
+    UserDto logout(String firstname);
+    List<UserDto> getAllOnlineUsers();
+    List<UserDto> searchUsers(String firstname);
+    Status getUserStatus(String firstname);
+//    List<UserDto> searchUsersWithExclusion(String firstname, List<UserDto> excludedUsers);
+    UserDto updateAvatar(String firstname, MultipartFile avatar);
+    List<UserDto> searchUsersWithExclusion(String firstname, List<Long> excludedIds);
 }

@@ -20,7 +20,7 @@ public interface iTacticsBoardService {
     void deleteBoard(Long id);
 
     PlayerIcon addPlayer(PlayerIcon player, Long tacticsBoardId);
-    void updateFormation(Long tacticsBoardId, Map<String, Position> formation);
+//    void updateFormation(Long tacticsBoardId, Map<String, Position> formation);
 
 //    void setAwayTeam(Long tacticsBoardId, Long teamId);
 //

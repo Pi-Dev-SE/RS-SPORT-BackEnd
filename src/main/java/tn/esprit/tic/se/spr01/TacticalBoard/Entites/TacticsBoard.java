@@ -26,10 +26,10 @@ public class TacticsBoard implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long idTactic;
     String name;
-    @ElementCollection
-    @CollectionTable(name = "formation", joinColumns = @JoinColumn(name = "tactics_board_id"))
-    @MapKeyColumn(name = "jersey_number")
-    private Map<String, Position> formation;
+//    @ElementCollection
+//    @CollectionTable(name = "formation", joinColumns = @JoinColumn(name = "tactics_board_id"))
+//    @MapKeyColumn(name = "jersey_number")
+//    private Map<String, Position> formation;
     LocalDate createdAt;
     @ManyToMany
     @JsonIgnore
@@ -60,9 +60,9 @@ public class TacticsBoard implements Serializable {
         this.name = name;
     }
 
-    public void setFormation(Map<String, Position> formation) {
-        this.formation = formation;
-    }
+//    public void setFormation(Map<String, Position> formation) {
+//        this.formation = formation;
+//    }
 
 
     public void setCreatedAt(LocalDate createdAt) {
