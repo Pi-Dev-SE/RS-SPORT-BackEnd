@@ -11,4 +11,6 @@ public interface PlayerIconRepository extends JpaRepository<PlayerIcon, Long> {
 
     List<PlayerIcon> findByTacticsBoard(TacticsBoard tacticsBoard);
 
+    PlayerIcon findByJerseyNumber(Integer jerseyNumber);
+
 }

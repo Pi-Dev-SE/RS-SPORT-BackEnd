@@ -4,6 +4,10 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import tn.esprit.tic.se.spr01.TacticalBoard.DTO.TacticsBoardDto;
@@ -58,9 +62,19 @@ public class TacticsBoardService implements iTacticsBoardService{
                 .orElseThrow(() -> new EntityNotFoundException("TacticsBoard not found with id: " + id));
     }
 
-    public List<TacticsBoard> getAllBoard() {
-        return tacticsBoardRepository.findAll();
+    public Page<TacticsBoard> getAllBoardsPaginated(int page, int size, String search, String sort) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        if ("asc".equalsIgnoreCase(sort)) {
+            pageable = PageRequest.of(page, size, Sort.by("createdAt").ascending());
+        }
+
+        if (search != null && !search.isEmpty()) {
+            return tacticsBoardRepository.findByNameContainingIgnoreCase(search, pageable);
+        } else {
+            return tacticsBoardRepository.findAll(pageable);
+        }
     }
+
 
     @Override
     public List<TacticsBoard> getBoardByDateRange(LocalDate startDate, LocalDate endDate) {
@@ -136,11 +150,10 @@ public class TacticsBoardService implements iTacticsBoardService{
     }
 
     @Override
-    public void deletePlayer(Long playerId, Long tacticsBoardId) {
+    public void deletePlayer(Integer jerseyNumber, Long tacticsBoardId) {
         TacticsBoard tacticsBoard = tacticsBoardRepository.findById(tacticsBoardId)
                 .orElseThrow(() -> new RuntimeException("TacticsBoard not found"));
-        PlayerIcon player = playerRepository.findById(playerId)
-                .orElseThrow(() -> new RuntimeException("Player not found"));
+        PlayerIcon player = playerRepository.findByJerseyNumber(jerseyNumber) ;
         tacticsBoard.getPlayers().remove(player);
         playerRepository.delete(player);
         tacticsBoardRepository.save(tacticsBoard);

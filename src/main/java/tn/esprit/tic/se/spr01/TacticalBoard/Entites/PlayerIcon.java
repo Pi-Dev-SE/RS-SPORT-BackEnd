@@ -75,4 +75,6 @@ public class PlayerIcon implements Serializable {
     public void setTacticsBoard(TacticsBoard tacticsBoard) {
         this.tacticsBoard = tacticsBoard;
     }
+
+
 }

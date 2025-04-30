@@ -1,5 +1,6 @@
 package tn.esprit.tic.se.spr01.TacticalBoard.Services;
 
+import org.springframework.data.domain.Page;
 import tn.esprit.tic.se.spr01.TacticalBoard.DTO.TacticsBoardDto;
 import tn.esprit.tic.se.spr01.TacticalBoard.Entites.PlayerIcon;
 import tn.esprit.tic.se.spr01.TacticalBoard.Entites.Position;
@@ -14,7 +15,8 @@ public interface iTacticsBoardService {
 
     TacticsBoard addBoard(TacticsBoardDto dto);
     TacticsBoard getBoardById(Long id);
-    List<TacticsBoard> getAllBoard();
+//    List<TacticsBoard> getAllBoard();
+    Page<TacticsBoard> getAllBoardsPaginated(int page, int size, String search, String sort);
     List<TacticsBoard> getBoardByDateRange(LocalDate startDate, LocalDate endDate);
     TacticsBoard updateBoard(Long id, TacticsBoardDto dto);
     void deleteBoard(Long id);
@@ -31,6 +33,6 @@ public interface iTacticsBoardService {
     List<PlayerIcon> getPlayersByTacticsBoard(Long tacticsBoardId);
     PlayerIcon updatePlayer(PlayerIcon player, Long tacticsBoardId);
 
-    void deletePlayer(Long playerId, Long tacticsBoardId);
+    void deletePlayer(Integer jerseyNumber, Long tacticsBoardId);
 
 }
