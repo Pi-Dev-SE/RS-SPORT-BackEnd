@@ -3,13 +3,13 @@ package tn.esprit.tic.se.spr01.TacticalBoard.Services;
 import org.springframework.data.domain.Page;
 import tn.esprit.tic.se.spr01.TacticalBoard.DTO.TacticsBoardDto;
 import tn.esprit.tic.se.spr01.TacticalBoard.Entites.PlayerIcon;
-import tn.esprit.tic.se.spr01.TacticalBoard.Entites.Position;
 import tn.esprit.tic.se.spr01.TacticalBoard.Entites.TacticsBoard;
-import tn.esprit.tic.se.spr01.UserManagement.Entities.Player;
+import tn.esprit.tic.se.spr01.TacticalBoard.DTO.TacticsEngagementData;
+import tn.esprit.tic.se.spr01.TacticalBoard.DTO.TacticsMonthlyActivity;
+import tn.esprit.tic.se.spr01.TacticalBoard.DTO.TacticsPlayerCount;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 public interface iTacticsBoardService {
 
@@ -34,5 +34,9 @@ public interface iTacticsBoardService {
     PlayerIcon updatePlayer(PlayerIcon player, Long tacticsBoardId);
 
     void deletePlayer(Integer jerseyNumber, Long tacticsBoardId);
-
+    
+    // Méthodes pour les statistiques
+    TacticsEngagementData getEngagementData();
+    List<TacticsMonthlyActivity> getMonthlyActivityData();
+    List<TacticsPlayerCount> getPlayerCountByBoard();
 }

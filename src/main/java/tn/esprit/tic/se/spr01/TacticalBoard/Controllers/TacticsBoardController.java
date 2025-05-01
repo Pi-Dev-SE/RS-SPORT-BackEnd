@@ -1,8 +1,6 @@
 package tn.esprit.tic.se.spr01.TacticalBoard.Controllers;
 
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +8,9 @@ import tn.esprit.tic.se.spr01.TacticalBoard.DTO.TacticsBoardDto;
 import tn.esprit.tic.se.spr01.TacticalBoard.Entites.PlayerIcon;
 import tn.esprit.tic.se.spr01.TacticalBoard.Entites.TacticsBoard;
 import tn.esprit.tic.se.spr01.TacticalBoard.Services.iTacticsBoardService;
+import tn.esprit.tic.se.spr01.TacticalBoard.DTO.TacticsEngagementData;
+import tn.esprit.tic.se.spr01.TacticalBoard.DTO.TacticsMonthlyActivity;
+import tn.esprit.tic.se.spr01.TacticalBoard.DTO.TacticsPlayerCount;
 import tn.esprit.tic.se.spr01.UserManagement.Entities.Player;
 import tn.esprit.tic.se.spr01.UserManagement.Services.iPlayerService;
 
@@ -123,5 +124,25 @@ public class TacticsBoardController {
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+    
+    // Endpoints pour les statistiques
+    
+    @GetMapping("/stats/engagement")
+    public ResponseEntity<TacticsEngagementData> getEngagementData() {
+        TacticsEngagementData data = tacticsBoardService.getEngagementData();
+        return ResponseEntity.ok(data);
+    }
+    
+    @GetMapping("/stats/monthly-activity")
+    public ResponseEntity<List<TacticsMonthlyActivity>> getMonthlyActivityData() {
+        List<TacticsMonthlyActivity> data = tacticsBoardService.getMonthlyActivityData();
+        return ResponseEntity.ok(data);
+    }
+    
+    @GetMapping("/stats/player-count")
+    public ResponseEntity<List<TacticsPlayerCount>> getPlayerCountByBoard() {
+        List<TacticsPlayerCount> data = tacticsBoardService.getPlayerCountByBoard();
+        return ResponseEntity.ok(data);
     }
 }
