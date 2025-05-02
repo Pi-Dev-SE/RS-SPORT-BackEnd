@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import tn.esprit.tic.se.spr01.health.dto.ReportDto;
 import tn.esprit.tic.se.spr01.health.dto.UserDto;
 
+
 import java.util.List;
 
 public interface IHealthReportService {
@@ -18,6 +19,7 @@ public interface IHealthReportService {
     public ReportDto updateReport (ReportDto reportDto);
     public List<UserDto> getMedicalStaff();
     public  List<UserDto> getPlayers();
+
 
 
 

@@ -1,7 +1,9 @@
 package tn.esprit.tic.se.spr01.health.dto;
 
+
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import tn.esprit.tic.se.spr01.health.entities.RecoveryRegime;
@@ -18,6 +20,7 @@ import java.time.LocalDate;
 
 public class RegimeDto {
     long regimeId;
+
     @NotNull(message = "generated Date required !")
     LocalDate generatedAt;
     @NotNull(message = "Daily duration is required.")
@@ -38,6 +41,7 @@ public class RegimeDto {
     String firstname;
     Long playerId;
 
+
     public static RegimeDto toDto(RecoveryRegime entity) {
         if (entity == null) {
             return null;
@@ -53,11 +57,13 @@ public class RegimeDto {
                 .physiotherapyRequired(entity.isPhysiotherapyRequired())
                 .progressTracking(entity.getProgressTracking())
                 .status(entity.getStatus())
+
                 .healthId(entity.getHealthReport() != null ? entity.getHealthReport().getHealthId() : 0L)
                 .firstname(entity.getHealthReport()!= null && entity.getHealthReport().getPlayer()!=null ?
                         entity.getHealthReport().getPlayer().getFirstname() :null)
                 .playerId(entity.getHealthReport()!=null && entity.getHealthReport().getPlayer()!=null ?
                         entity.getHealthReport().getPlayer().getId() : 0L)
+
                 .build();
     }
 

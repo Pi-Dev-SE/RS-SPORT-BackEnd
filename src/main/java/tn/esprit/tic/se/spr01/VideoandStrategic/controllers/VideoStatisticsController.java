@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import tn.esprit.tic.se.spr01.VideoandStrategic.dto.VideoStatisticsDto;
 import tn.esprit.tic.se.spr01.VideoandStrategic.entities.VideoStatistics;
 import tn.esprit.tic.se.spr01.VideoandStrategic.services.VideoStatisticsServiceImpl;
 
@@ -14,11 +13,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/video-statistics")
 @RequiredArgsConstructor
+
 @CrossOrigin("*")
+
 public class VideoStatisticsController {
 
     @Autowired
     private VideoStatisticsServiceImpl videoStatisticsService;
+
 
 
     @PostMapping("/createVideoStatistic")

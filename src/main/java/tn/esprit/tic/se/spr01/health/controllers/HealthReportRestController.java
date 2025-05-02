@@ -1,5 +1,6 @@
 package tn.esprit.tic.se.spr01.health.controllers;
 
+
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -8,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.tic.se.spr01.health.dto.ReportDto;
 import tn.esprit.tic.se.spr01.health.dto.UserDto;
+
 import tn.esprit.tic.se.spr01.health.services.HealthReportService;
 
 import java.util.List;
@@ -34,11 +36,14 @@ public class HealthReportRestController {
     }
 
     @PostMapping("/addReport")
+
     public ReportDto addReport ( @Valid @RequestBody ReportDto reportDto
+
     ){
         return healthReportService.addReport(reportDto);
 
     }
+
     /* @GetMapping("/retrieve-all-report")
      public List<ReportDto> retrieveAllReport() {
          return healthReportService.retriveAllReport();
@@ -54,6 +59,7 @@ public class HealthReportRestController {
     }
 
 
+
     @GetMapping("/retrieve-report/{healthId}")
     public ReportDto retrieveReport(@PathVariable("healthId") long healthId) {
         return  healthReportService.retrieveReport(healthId);
@@ -61,7 +67,9 @@ public class HealthReportRestController {
     }
 
     @PutMapping("/update-report/{id}")
+
     public ReportDto updateReport( @Valid @PathVariable Long id, @RequestBody ReportDto reportDto) {
+
         reportDto.setHealthId(id);
         return healthReportService.updateReport(reportDto);
     }
@@ -76,4 +84,7 @@ public class HealthReportRestController {
 
 
 
+
 }
+
+

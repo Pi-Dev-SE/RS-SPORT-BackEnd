@@ -7,14 +7,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import tn.esprit.tic.se.spr01.entities.Player;
+
+import tn.esprit.tic.se.spr01.UserManagement.Entities.Player;
+import tn.esprit.tic.se.spr01.UserManagement.Repositories.PlayerRepository;
 import tn.esprit.tic.se.spr01.health.dto.PerformanceTrackingDto;
 import tn.esprit.tic.se.spr01.health.entities.HealthReport;
 import tn.esprit.tic.se.spr01.health.entities.NiveauRisque;
 import tn.esprit.tic.se.spr01.health.entities.PerformanceTracking;
 import tn.esprit.tic.se.spr01.health.entities.TypeStatusHealth;
 import tn.esprit.tic.se.spr01.health.repositories.PerformanceTrackingRepository;
-import tn.esprit.tic.se.spr01.health.repositories.PlayerRepository;
 import tn.esprit.tic.se.spr01.health.repositories.RepositoryHealthReport;
 
 import java.time.LocalDate;
