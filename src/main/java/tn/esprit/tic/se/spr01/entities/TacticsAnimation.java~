@@ -1,0 +1,30 @@
+package tn.esprit.tic.se.spr01.entities;
+
+import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.TypeDefs;
+import com.vladmihalcea.hibernate.type.json.JsonStringType;
+
+import java.io.Serializable;
+
+@Entity
+@TypeDefs({ // Use @TypeDefs instead of @TypeDef
+        @TypeDef(name = "json", typeClass = JsonStringType.class) })// Déclaration du type JSON
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level= AccessLevel.PRIVATE)
+public class TacticsAnimation implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long idTacticsAnimation;
+    @Type(type = "json") // Utilisation du type JSON
+    @Column(columnDefinition = "jsonb") // Définition de la colonne en JSON
+    String animationData; // simulationData est une chaîne JSON
+    String previewUrl;
+    Double duration;
+}
