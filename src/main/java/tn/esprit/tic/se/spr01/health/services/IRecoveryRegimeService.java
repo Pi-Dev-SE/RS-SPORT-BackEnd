@@ -8,6 +8,7 @@ import tn.esprit.tic.se.spr01.health.dto.RegimeDto;
 import tn.esprit.tic.se.spr01.health.entities.RecoveryRegime;
 
 import java.util.List;
+import java.util.Map;
 
 import java.util.Map;
 

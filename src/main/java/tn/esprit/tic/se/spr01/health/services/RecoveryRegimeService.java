@@ -9,12 +9,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+
 import tn.esprit.tic.se.spr01.UserManagement.Entities.Player;
 import tn.esprit.tic.se.spr01.UserManagement.Repositories.PlayerRepository;
 import tn.esprit.tic.se.spr01.health.dto.RegimeDto;
 import tn.esprit.tic.se.spr01.health.entities.HealthReport;
 import tn.esprit.tic.se.spr01.health.entities.RecoveryRegime;
 import tn.esprit.tic.se.spr01.health.entities.TypeStatusRegime;
+
 import tn.esprit.tic.se.spr01.health.repositories.RepositoryHealthReport;
 import tn.esprit.tic.se.spr01.health.repositories.RepositoryRecoveryRegime;
 
@@ -60,6 +62,7 @@ public class RecoveryRegimeService implements IRecoveryRegimeService{
 
         report.setRecoveryRegime(regime);
         repositoryHealthReport.save(report);
+        //emailService.sendRecoveryRegimeEmail(regime);
 
         //emailService.sendRecoveryRegimeEmail(regime);
 
@@ -201,5 +204,4 @@ public class RecoveryRegimeService implements IRecoveryRegimeService{
 
 
 }
-
 

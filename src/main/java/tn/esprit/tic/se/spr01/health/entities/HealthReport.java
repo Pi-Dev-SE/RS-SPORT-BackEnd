@@ -32,18 +32,15 @@ public class HealthReport implements Serializable {
  @Id
  @GeneratedValue(strategy = GenerationType.IDENTITY)
  long healthId;
-
  String injuryType;
  @Enumerated(EnumType.STRING)
  TypeInjurySeverity injurySeverity;
  LocalDate diagnosisDate;
-
  LocalDate expectedRecoveryDate;
  String recoveryPlan;
  String fitnessLevel;
  String medicalNotes;
  @Enumerated(EnumType.STRING)
-
  TypeStatusHealth status;
  @OneToOne (cascade = CascadeType.ALL)
  RecoveryRegime recoveryRegime;
@@ -73,6 +70,5 @@ public class HealthReport implements Serializable {
            .status(dto.getStatus())
            .build();
  }
-
 
 }

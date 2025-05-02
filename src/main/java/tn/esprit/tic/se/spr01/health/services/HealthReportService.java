@@ -9,12 +9,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import tn.esprit.tic.se.spr01.UserManagement.DTO.UserDto;
 import tn.esprit.tic.se.spr01.UserManagement.Entities.MedicalStaff;
 import tn.esprit.tic.se.spr01.UserManagement.Entities.Player;
 import tn.esprit.tic.se.spr01.UserManagement.Repositories.MedicalStaffRepository;
 import tn.esprit.tic.se.spr01.UserManagement.Repositories.PlayerRepository;
 import tn.esprit.tic.se.spr01.health.dto.ReportDto;
-import tn.esprit.tic.se.spr01.health.dto.UserDto;
 import tn.esprit.tic.se.spr01.health.entities.HealthReport;
 import tn.esprit.tic.se.spr01.health.repositories.RepositoryHealthReport;
 import tn.esprit.tic.se.spr01.health.repositories.RepositoryRecoveryRegime;
@@ -31,8 +31,9 @@ public class HealthReportService implements IHealthReportService{
     RepositoryHealthReport repositoryHealthReport;
     PlayerRepository playerRepository;
     RepositoryRecoveryRegime repositoryRecoveryRegime;
-
     EmailServiceImpl emailService;
+
+
 
 
 
@@ -76,7 +77,6 @@ public class HealthReportService implements IHealthReportService{
     }
 
 
-
     @Override
     public ReportDto retrieveReport(long healthId) {
         HealthReport report = repositoryHealthReport.findById(healthId)
@@ -108,7 +108,6 @@ public class HealthReportService implements IHealthReportService{
 
         return ReportDto.toDto(repositoryHealthReport.save(report));
     }
-
 
 
 }

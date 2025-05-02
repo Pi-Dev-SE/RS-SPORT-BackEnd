@@ -20,7 +20,6 @@ import java.time.LocalDate;
 
 public class RegimeDto {
     long regimeId;
-
     @NotNull(message = "generated Date required !")
     LocalDate generatedAt;
     @NotNull(message = "Daily duration is required.")

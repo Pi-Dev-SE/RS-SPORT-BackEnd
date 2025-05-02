@@ -45,7 +45,7 @@ public class MedicalStaffService implements iMedicalStaffService{
         existingMedicalStaff.setDateOfBirth(medicalStaff.getDateOfBirth());
         existingMedicalStaff.setEnabled(medicalStaff.isEnabled());
         existingMedicalStaff.setAccountLocked(medicalStaff.isAccountLocked());
-        existingMedicalStaff.setSpecialization(medicalStaff.getSpecializationMed());
+        existingMedicalStaff.setSpecializationMed(medicalStaff.getSpecializationMed());
         existingMedicalStaff.setLicenseNumber(medicalStaff.getLicenseNumber());
         return medicalStaffRepository.save(existingMedicalStaff);
     }

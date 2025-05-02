@@ -1,6 +1,5 @@
 package tn.esprit.tic.se.spr01.health.dto;
 
-
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;

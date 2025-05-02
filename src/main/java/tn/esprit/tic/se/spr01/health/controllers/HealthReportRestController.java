@@ -7,8 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+import tn.esprit.tic.se.spr01.UserManagement.DTO.UserDto;
 import tn.esprit.tic.se.spr01.health.dto.ReportDto;
-import tn.esprit.tic.se.spr01.health.dto.UserDto;
 
 import tn.esprit.tic.se.spr01.health.services.HealthReportService;
 
@@ -86,5 +86,3 @@ public class HealthReportRestController {
 
 
 }
-
-

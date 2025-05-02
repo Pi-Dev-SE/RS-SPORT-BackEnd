@@ -23,6 +23,7 @@ public class Comment {
     private Date createdAt;
 
 
+
     private String postedBy;
 
     @ManyToOne
