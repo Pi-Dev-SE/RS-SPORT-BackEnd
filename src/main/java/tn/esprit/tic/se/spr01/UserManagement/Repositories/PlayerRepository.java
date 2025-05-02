@@ -17,8 +17,6 @@ public interface PlayerRepository extends JpaRepository<Player, Long> {
 
     List<Player> findAllBy();
 
-    @Query("SELECT p FROM Player p LEFT JOIN p.healthReport h WHERE h IS NULL")
-    List<Player> findPlayersWithoutHealthReport();
 
     @Transactional
     @Modifying

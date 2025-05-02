@@ -10,7 +10,7 @@ import lombok.*;
 import tn.esprit.tic.se.spr01.TacticalBoard.Entites.TacticsBoard;
 
 import tn.esprit.tic.se.spr01.TeamandPlayer.entities.Team;
-import tn.esprit.tic.se.spr01.TrainingSession.Entities.Session;
+
 import tn.esprit.tic.se.spr01.UserManagement.Entities.Coach;
 
 
@@ -52,9 +52,7 @@ public class Exercise implements Serializable {
 
     private LocalDate creationDate;
 
-    @ManyToMany(mappedBy = "exercises", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private Set<Session> sessions = new HashSet<>();
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_team", nullable = false)

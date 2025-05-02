@@ -6,17 +6,16 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+
 import tn.esprit.tic.se.spr01.UserManagement.Entities.MedicalStaff;
 import tn.esprit.tic.se.spr01.UserManagement.Entities.Player;
 import tn.esprit.tic.se.spr01.health.dto.ReportDto;
-import tn.esprit.tic.se.spr01.health.entities.TypeInjurySeverity;
-import tn.esprit.tic.se.spr01.health.entities.TypeStatusHealth;
-import tn.esprit.tic.se.spr01.health.entities.RecoveryRegime;
+
 
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.List;
 
 
 
@@ -36,9 +35,7 @@ public class HealthReport implements Serializable {
 
  String injuryType;
  @Enumerated(EnumType.STRING)
-
  TypeInjurySeverity injurySeverity;
-
  LocalDate diagnosisDate;
 
  LocalDate expectedRecoveryDate;
@@ -52,7 +49,9 @@ public class HealthReport implements Serializable {
  RecoveryRegime recoveryRegime;
  @ManyToOne
  MedicalStaff medicalStaff;
- @OneToOne(mappedBy = "healthReport", fetch = FetchType.LAZY)
+
+ @ManyToOne ( fetch = FetchType.EAGER)
+
  @JsonIgnore
  Player player;
 

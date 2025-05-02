@@ -14,9 +14,11 @@ import tn.esprit.tic.se.spr01.TeamandPlayer.entities.Team;
 import tn.esprit.tic.se.spr01.UserManagement.Entities.User;
 
 import tn.esprit.tic.se.spr01.health.entities.HealthReport;
+import tn.esprit.tic.se.spr01.health.entities.PerformanceTracking;
 import tn.esprit.tic.se.spr01.health.entities.TypeStatusHealth;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -32,9 +34,10 @@ public class Player  extends User implements Serializable {
     private Integer jerseyNumber;
     @Enumerated(EnumType.STRING)
     private TypeStatusHealth healthStatus;
-    @OneToOne(fetch = FetchType.LAZY)
-    HealthReport healthReport;
-
+    @OneToMany(mappedBy = "player",fetch = FetchType.EAGER)
+    List<HealthReport> healthReports = new ArrayList<>();
+    @OneToMany(mappedBy = "player", fetch = FetchType.LAZY)
+    List<PerformanceTracking> performances = new ArrayList<>();
 
 
     @ManyToOne
@@ -54,13 +57,7 @@ public class Player  extends User implements Serializable {
     }
 
 
-    public HealthReport getHealthReport() {
-        return healthReport;
-    }
 
-    public void setHealthReport(HealthReport healthReport) {
-        this.healthReport = healthReport;
-    }
 
     public void setRole(String role) {
         this.role = role;

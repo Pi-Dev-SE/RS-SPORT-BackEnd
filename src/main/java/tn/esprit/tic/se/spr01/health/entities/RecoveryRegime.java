@@ -25,6 +25,7 @@ public class RecoveryRegime implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long regimeId;
     LocalDate generatedAt;
+
     int dailyDuration;
     String recommendedExercise;
     String exerciseIntensity;
@@ -53,5 +54,6 @@ public class RecoveryRegime implements Serializable {
                     .build();
 
     }
+
 
 }
