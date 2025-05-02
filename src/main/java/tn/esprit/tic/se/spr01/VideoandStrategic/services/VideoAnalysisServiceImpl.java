@@ -1,93 +1,110 @@
 package tn.esprit.tic.se.spr01.VideoandStrategic.services;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import tn.esprit.tic.se.spr01.VideoandStrategic.dto.VideoAnalysisDto;
+import org.springframework.web.multipart.MultipartFile;
 import tn.esprit.tic.se.spr01.VideoandStrategic.entities.VideoAnalysis;
+import tn.esprit.tic.se.spr01.VideoandStrategic.entities.VideoAnalysisType;
+import tn.esprit.tic.se.spr01.VideoandStrategic.entities.VideoStatus;
 import tn.esprit.tic.se.spr01.VideoandStrategic.repositories.VideoAnalysisRepository;
-import tn.esprit.tic.se.spr01.VideoandStrategic.repositories.VideoAnnotationRepository;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class VideoAnalysisServiceImpl implements VideoAnalysisService {
 
-    @Autowired
-    VideoAnalysisRepository videoAnalysisRepository;
+    private final VideoAnalysisRepository videoAnalysisRepository;
 
-    @Autowired
-    VideoAnnotationRepository videoAnnotationRepository;
+    private final FileNamingUtil fileNamingUtil;
+    @Value("${Upload_video}")
+    private  String Upload_video;
 
-    // Convert Entity to DTO
-    private VideoAnalysisDto convertToDTO(VideoAnalysis video) {
-        return VideoAnalysisDto.builder()
-                .videoAnalysisId(video.getVideoAnalysisId())
-                .title(video.getTitle())
-                .description(video.getDescription())
-                .videoUrl(video.getVideoUrl())
-                .analysisType(video.getAnalysisType())
-                .status(video.getStatus())
-                .build();
+    @Override
+    public VideoAnalysis create(String title, String description, MultipartFile videoUrl, VideoAnalysisType analysisType,
+                                VideoStatus status) {
+        try {
+            // Vérifier l'existence du répertoire de téléchargement, le créer si nécessaire
+            Path uploadPath = Paths.get(Upload_video);
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            String fileName = fileNamingUtil.nameFile(videoUrl);
+
+            Path destinationPath = uploadPath.resolve(fileName);
+            Files.copy(videoUrl.getInputStream(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
+
+            VideoAnalysis newVideoAnalysis = new VideoAnalysis();
+            newVideoAnalysis.setTitle(title);
+            newVideoAnalysis.setDescription(description);
+            newVideoAnalysis.setVideoUrl(fileName.toString());
+            newVideoAnalysis.setAnalysisType(analysisType);
+            newVideoAnalysis.setStatus(status);
+
+            return videoAnalysisRepository.save(newVideoAnalysis);
+        } catch (IOException e) {
+
+            throw new RuntimeException("Failed to upload video", e);
+        }
     }
 
-    // Convert DTO to Entity
-    private VideoAnalysis convertToEntity(VideoAnalysisDto dto) {
-        return VideoAnalysis.builder()
-                .videoAnalysisId(dto.getVideoAnalysisId())
-                .title(dto.getTitle())
-                .description(dto.getDescription())
-                .videoUrl(dto.getVideoUrl())
-                .analysisType(dto.getAnalysisType())
-                .status(dto.getStatus())
-                .build();
+    @Override
+    public VideoAnalysis update(Long id, String title, String description, MultipartFile videoUrl,
+                                VideoAnalysisType analysisType, VideoStatus status) {
+        VideoAnalysis existingVideoAnalysis = videoAnalysisRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("VideoAnalysis not found"));
+
+        try {
+            if (videoUrl != null && !videoUrl.isEmpty()) {
+                Path uploadPath = Paths.get(Upload_video);
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+
+                String fileName = fileNamingUtil.nameFile(videoUrl);
+                Path destinationPath = uploadPath.resolve(fileName);
+                Files.copy(videoUrl.getInputStream(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
+
+                existingVideoAnalysis.setVideoUrl(fileName);
+            }
+
+            existingVideoAnalysis.setTitle(title);
+            existingVideoAnalysis.setDescription(description);
+            existingVideoAnalysis.setAnalysisType(analysisType);
+            existingVideoAnalysis.setStatus(status);
+
+            return videoAnalysisRepository.save(existingVideoAnalysis);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to update video", e);
+        }
     }
 
-    // Create
-    public VideoAnalysisDto createVideoAnalysis(VideoAnalysisDto dto) {
-        VideoAnalysis video = convertToEntity(dto);
-        VideoAnalysis savedVideo = videoAnalysisRepository.save(video);
-        return convertToDTO(savedVideo);
-    }
-
-    // Read (All)
-    public List<VideoAnalysisDto> getAllVideos() {
-        return videoAnalysisRepository.findAll()
-                .stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-    }
-
-    // Read (By ID)
-    public VideoAnalysisDto getVideoById(Long id) {
-        return videoAnalysisRepository.findById(id)
-                .map(this::convertToDTO)
-                .orElseThrow(() -> new RuntimeException("Video not found"));
-    }
-
-    // Update
-    public VideoAnalysisDto updateVideo(Long id, VideoAnalysisDto dto) {
-        VideoAnalysis existingVideo = videoAnalysisRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Video not found"));
-
-        existingVideo.setTitle(dto.getTitle());
-        existingVideo.setDescription(dto.getDescription());
-        existingVideo.setVideoUrl(dto.getVideoUrl());
-        existingVideo.setAnalysisType(dto.getAnalysisType());
-        existingVideo.setStatus(dto.getStatus());
-
-        VideoAnalysis updatedVideo = videoAnalysisRepository.save(existingVideo);
-        return convertToDTO(updatedVideo);
-    }
-
-    // Delete
-    public void deleteVideo(Long id) {
+    @Override
+    public void delete(Long id) {
         videoAnalysisRepository.deleteById(id);
     }
 
+    @Override
+    public VideoAnalysis getById(Long id) {
+        return videoAnalysisRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("VideoAnalysis not found"));
+    }
 
+    @Override
+    public List<VideoAnalysis> getAll() {
+        return videoAnalysisRepository.findAll();
+    }
 
-
+    public List<VideoAnalysis> searchByName(String title) {
+        return videoAnalysisRepository.findAllByTitleContaining(title);
+    }
 }

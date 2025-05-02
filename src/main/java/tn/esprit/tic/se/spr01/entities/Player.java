@@ -1,16 +1,16 @@
 package tn.esprit.tic.se.spr01.entities;
 
-
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
 import tn.esprit.tic.se.spr01.SessionAndExercice.entities.AbsentPlayer;
 import tn.esprit.tic.se.spr01.health.entities.HealthReport;
+import tn.esprit.tic.se.spr01.health.entities.PerformanceTracking;
 import tn.esprit.tic.se.spr01.health.entities.TypeStatusHealth;
 
-
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -22,16 +22,14 @@ import java.util.List;
 @DiscriminatorValue("PLAYER")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 
-public class Player  extends User {
+public class Player  extends User{
     private String position;
     private Integer jerseyNumber;
     @Enumerated(EnumType.STRING)
     private TypeStatusHealth healthStatus;
-    @OneToOne(fetch = FetchType.LAZY)
-    HealthReport healthReport;
-
-
-    @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<AbsentPlayer> absences;
+    @OneToMany(mappedBy = "player",fetch = FetchType.EAGER)
+    List<HealthReport> healthReports = new ArrayList<>();
+    @OneToMany(mappedBy = "player", fetch = FetchType.LAZY)
+    List<PerformanceTracking> performances = new ArrayList<>();
 
 }

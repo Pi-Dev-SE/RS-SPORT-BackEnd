@@ -1,8 +1,11 @@
 package tn.esprit.tic.se.spr01.health.dto;
 
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import tn.esprit.tic.se.spr01.entities.MedicalStaff;
+
 import tn.esprit.tic.se.spr01.health.entities.HealthReport;
 import tn.esprit.tic.se.spr01.health.entities.TypeInjurySeverity;
 import tn.esprit.tic.se.spr01.health.entities.TypeStatusHealth;
@@ -17,19 +20,28 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ReportDto {
     long healthId;
+    @NotNull(message = "injury type required !")
     String injuryType;
+    @NotNull(message = "injury severity required !")
     TypeInjurySeverity injurySeverity;
+    @NotNull(message = "diagnosis date required !")
     LocalDate diagnosisDate;
+    @Future(message = "The recovery date must be after the diagnosis date !")
     LocalDate expectedRecoveryDate;
+    @NotNull(message = "recovery Plan required !")
     String recoveryPlan;
+    @Pattern(regexp = "^(Low|Medium|High)$", message = "Fitness Level must be : 'Low', 'Medium' ou 'High'.")
     String fitnessLevel;
+    @NotNull(message = "medical notes required !")
     String medicalNotes;
+    @NotNull(message = "status required !")
     TypeStatusHealth status;
     Long staffId;
     Long playerId;
     Long regimeId;
     String firstNameMed;
     String firstNamePlay;
+
     public static ReportDto toDto(HealthReport report) {
 
         if (report == null) {
@@ -37,6 +49,8 @@ public class ReportDto {
         }
         return ReportDto.builder()
                 .healthId(report.getHealthId())
+                .staffId(report.getMedicalStaff()!= null ? report.getMedicalStaff().getId() : null)
+                .playerId(report.getPlayer()!= null ? report.getPlayer().getId(): null)
                 .regimeId(report.getRecoveryRegime() != null ? report.getRecoveryRegime().getRegimeId() : null)
                 .injurySeverity(report.getInjurySeverity())
                 .injuryType(report.getInjuryType())

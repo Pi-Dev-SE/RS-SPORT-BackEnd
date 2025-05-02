@@ -2,6 +2,8 @@ package tn.esprit.tic.se.spr01.health.services;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -10,10 +12,10 @@ import tn.esprit.tic.se.spr01.entities.Player;
 import tn.esprit.tic.se.spr01.health.dto.ReportDto;
 import tn.esprit.tic.se.spr01.health.dto.UserDto;
 import tn.esprit.tic.se.spr01.health.entities.HealthReport;
+import tn.esprit.tic.se.spr01.health.repositories.MedicalStaffRepository;
 import tn.esprit.tic.se.spr01.health.repositories.RepositoryHealthReport;
 import tn.esprit.tic.se.spr01.health.repositories.RepositoryRecoveryRegime;
-import tn.esprit.tic.se.spr01.repositories.MedicalStaffRepository;
-import tn.esprit.tic.se.spr01.repositories.PlayerRepository;
+import tn.esprit.tic.se.spr01.health.repositories.PlayerRepository;
 
 import java.util.List;
 
@@ -26,6 +28,7 @@ public class HealthReportService implements IHealthReportService{
     RepositoryHealthReport repositoryHealthReport;
     PlayerRepository playerRepository;
     RepositoryRecoveryRegime repositoryRecoveryRegime;
+    EmailServiceImpl emailService;
 
 
     public List<UserDto> getMedicalStaff() {
@@ -37,6 +40,7 @@ public class HealthReportService implements IHealthReportService{
         List<Player> users = playerRepository.findAllBy();
         return users.stream().map(UserDto::toDto).toList();
     }
+
     @Override
     public ReportDto addReport(ReportDto reportDto) {
         MedicalStaff staff = medicalStaffRepository.findById(reportDto.getStaffId())
@@ -45,26 +49,26 @@ public class HealthReportService implements IHealthReportService{
         Player player = playerRepository.findById(reportDto.getPlayerId())
                 .orElseThrow(() -> new EntityNotFoundException("Player not found with ID: " + reportDto.getPlayerId()));
 
-        if (player.getHealthReport() != null) {
-            throw new IllegalStateException("Player already has a health report.");
-        }
-
         HealthReport report = HealthReport.toEntity(reportDto);
+        report.setPlayer(player);
         report.setMedicalStaff(staff);
         repositoryHealthReport.save(report);
 
-        player.setHealthReport(report);
         player.setHealthStatus(report.getStatus());
         playerRepository.save(player);
 
+        //emailService.sendHealthReportEmail(player,  report);
+
         return ReportDto.toDto(report);
+
     }
 
     @Override
-    public List<ReportDto> retriveAllReport() {
-        List<HealthReport> healthReports = repositoryHealthReport.findAll();
-        return healthReports.stream().map(ReportDto::toDto).toList();
+    public Page<ReportDto> retriveAllReport(Pageable pageable) {
+        Page<HealthReport> page = repositoryHealthReport.findAll(pageable);
+        return page.map(ReportDto::toDto); // convertit chaque HealthReport en DTO
     }
+
 
     @Override
     public ReportDto retrieveReport(long healthId) {
@@ -75,17 +79,8 @@ public class HealthReportService implements IHealthReportService{
 
     @Override
     public void removeReport(long healthId) {
-        HealthReport report = repositoryHealthReport.findById(healthId)
-                .orElseThrow(() -> new IllegalArgumentException("HealthReport not found"));
+        repositoryHealthReport.deleteById(healthId);
 
-
-        if (report.getPlayer() != null) {
-            report.getPlayer().setHealthReport(null);
-            playerRepository.save(report.getPlayer());
-        }
-
-
-        repositoryHealthReport.delete(report);
     }
 
     @Override
@@ -104,7 +99,6 @@ public class HealthReportService implements IHealthReportService{
 
         return ReportDto.toDto(repositoryHealthReport.save(report));
     }
-
 
 
 }

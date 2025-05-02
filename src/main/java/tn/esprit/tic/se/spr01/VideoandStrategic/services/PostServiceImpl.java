@@ -1,91 +1,121 @@
 package tn.esprit.tic.se.spr01.VideoandStrategic.services;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import tn.esprit.tic.se.spr01.VideoandStrategic.dto.PostDto;
+import org.springframework.web.multipart.MultipartFile;
 import tn.esprit.tic.se.spr01.VideoandStrategic.entities.Post;
+
 import tn.esprit.tic.se.spr01.VideoandStrategic.repositories.PostRepository;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
-public class PostServiceImpl {
+public class PostServiceImpl implements PostService {
 
-    @Autowired
-    private PostRepository postRepository;
 
-    // Convert Entity to DTO
-    private PostDto convertToDTO(Post post) {
-        return PostDto.builder()
-                .idPost(post.getIdPost())
-                .clubName(post.getClubName())
-                .content(post.getContent())
-                .img(post.getImg())
-                .date(post.getDate())
-                .likeCount(post.getLikeCount())
-                .viewCount(post.getViewCount())
-                .tags(post.getTags())
-                .build();
+    private final  PostRepository postRepository;
+
+    private final FileNamingUtil fileNamingUtil;
+    @Value("${Upload_image}")
+    private  String Upload_image;
+
+
+    @Override
+    public Post addPost(String clubName, String postedBy, String content, MultipartFile img,Date date) {
+        try {
+            Path uploadPath = Paths.get(Upload_image);
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            String fileName = fileNamingUtil.nameFile(img);
+            Path destinationPath = uploadPath.resolve(fileName);
+            Files.copy(img.getInputStream(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
+
+            Post newPost = new Post();
+            newPost.setClubName(clubName);
+            newPost.setPostedBy(postedBy);
+            newPost.setContent(content);
+            newPost.setImg(fileName.toString());
+
+
+            newPost.setDate(date != null ? date : new Date());
+
+            return postRepository.save(newPost);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to upload video", e);
+        }
     }
 
-    // Convert DTO to Entity
-    private Post convertToEntity(PostDto dto) {
-        return Post.builder()
-                .idPost(dto.getIdPost())
-                .clubName(dto.getClubName())
-                .content(dto.getContent())
-                .img(dto.getImg())
-                .date(dto.getDate())
-                .likeCount(dto.getLikeCount())
-                .viewCount(dto.getViewCount())
-                .tags(dto.getTags())
-                .build();
+
+
+
+    @Override
+    public Post updatePost(Long idPost, String clubName, String postedBy, String content, MultipartFile img, Date date) {
+        try {
+            Post existingPost = postRepository.findById(idPost).orElseThrow(() -> new RuntimeException("Post not found"));
+
+            existingPost.setClubName(clubName);
+            existingPost.setPostedBy(postedBy);
+            existingPost.setContent(content);
+            existingPost.setDate(date != null ? date : existingPost.getDate());
+
+            if (img != null && !img.isEmpty()) {
+                // Save the new image
+                Path uploadPath = Paths.get(Upload_image);
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+
+                String fileName = fileNamingUtil.nameFile(img);
+                Path destinationPath = uploadPath.resolve(fileName);
+                Files.copy(img.getInputStream(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
+
+                existingPost.setImg(fileName.toString());
+            }
+
+            return postRepository.save(existingPost);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to update post", e);
+        }
     }
 
-    // Create
-    public PostDto createPost(PostDto dto) {
-        Post post = convertToEntity(dto);
-        Post savedPost = postRepository.save(post);
-        return convertToDTO(savedPost);
-    }
 
-    // Read (All)
-    public List<PostDto> getAllPosts() {
-        return postRepository.findAll()
-                .stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-    }
-
-    // Read (By ID)
-    public PostDto getPostById(Long id) {
-        return postRepository.findById(id)
-                .map(this::convertToDTO)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
-    }
-
-    // Update
-    public PostDto updatePost(Long id, PostDto dto) {
-        Post existingPost = postRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
-
-        existingPost.setClubName(dto.getClubName());
-        existingPost.setContent(dto.getContent());
-        existingPost.setImg(dto.getImg());
-        existingPost.setDate(dto.getDate());
-        existingPost.setLikeCount(dto.getLikeCount());
-        existingPost.setViewCount(dto.getViewCount());
-        existingPost.setTags(dto.getTags());
-
-        Post updatedPost = postRepository.save(existingPost);
-        return convertToDTO(updatedPost);
-    }
-
-    // Delete
+    @Override
     public void deletePost(Long id) {
-        postRepository.deleteById(id);
+        Post post = postRepository.findById(id).orElse(null);
+        if (post != null) {
+            post.getComments().clear(); // optional if using cascade+orphanRemoval
+            postRepository.delete(post); // this will cascade if set correctly
+        }
     }
+
+
+    @Override
+    public Post getPostById(Long id) {
+        return postRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public List<Post> getAllPosts() {
+        return postRepository.findAll();
+    }
+
+    public List<Post> searchByName(String clubName) {
+        return postRepository.findAllByClubNameContaining(clubName);
+    }
+
+
+
+
+
 }
