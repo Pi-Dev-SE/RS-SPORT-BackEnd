@@ -1,8 +1,10 @@
+
 package tn.esprit.tic.se.spr01.TeamandPlayer.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
 
 
 import java.io.Serializable;
@@ -16,14 +18,17 @@ import java.util.Date;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 @RequiredArgsConstructor
+
 public class TeamStat implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int teamstaId;
+
     float performanceRate ;
     int tolalWins ;
     int tolalLoses ;
     Date date ;
     int rankinPoints ;
     
+
 }

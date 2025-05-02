@@ -22,10 +22,13 @@ public class Comment {
 
     private Date createdAt;
 
+
+
     private String postedBy;
 
     @ManyToOne
     @JoinColumn(name="post_id", nullable=false)
+
     @JsonIgnore
     private Post post;
 

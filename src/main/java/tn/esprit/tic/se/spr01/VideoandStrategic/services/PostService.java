@@ -1,5 +1,6 @@
 package tn.esprit.tic.se.spr01.VideoandStrategic.services;
 
+
 import org.springframework.web.multipart.MultipartFile;
 import tn.esprit.tic.se.spr01.VideoandStrategic.entities.Post;
 
@@ -15,6 +16,7 @@ public interface PostService {
     Post getPostById(Long id);
     List<Post> getAllPosts();
     List<Post> searchByName(String clubName);
+
 
 
 

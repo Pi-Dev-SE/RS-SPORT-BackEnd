@@ -1,18 +1,22 @@
 package tn.esprit.tic.se.spr01.health.services;
 
 import lombok.AllArgsConstructor;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import tn.esprit.tic.se.spr01.entities.Player;
+
+
+import tn.esprit.tic.se.spr01.UserManagement.Entities.Player;
+import tn.esprit.tic.se.spr01.UserManagement.Repositories.PlayerRepository;
 import tn.esprit.tic.se.spr01.health.dto.RegimeDto;
 import tn.esprit.tic.se.spr01.health.entities.HealthReport;
 import tn.esprit.tic.se.spr01.health.entities.RecoveryRegime;
 import tn.esprit.tic.se.spr01.health.entities.TypeStatusRegime;
-import tn.esprit.tic.se.spr01.health.repositories.PlayerRepository;
+
 import tn.esprit.tic.se.spr01.health.repositories.RepositoryHealthReport;
 import tn.esprit.tic.se.spr01.health.repositories.RepositoryRecoveryRegime;
 
@@ -25,6 +29,7 @@ import java.util.Map;
 
 
 @Slf4j
+
 @Service
 @AllArgsConstructor
 public class RecoveryRegimeService implements IRecoveryRegimeService{
@@ -32,9 +37,11 @@ public class RecoveryRegimeService implements IRecoveryRegimeService{
     RepositoryHealthReport repositoryHealthReport;
     @Autowired
     RepositoryRecoveryRegime repositoryRecoveryRegime;
+
     EmailServiceImpl emailService;
     PlayerRepository playerRepository;
     NotificationServiceImpl notificationService;
+
 
 
     @Override
@@ -47,22 +54,29 @@ public class RecoveryRegimeService implements IRecoveryRegimeService{
         }
 
 
+
         RecoveryRegime regime = RecoveryRegime.toEntity(regimeDto);
         regime.setHealthReport(report);
+
         regime = repositoryRecoveryRegime.save(regime);
 
         report.setRecoveryRegime(regime);
         repositoryHealthReport.save(report);
         //emailService.sendRecoveryRegimeEmail(regime);
 
+        //emailService.sendRecoveryRegimeEmail(regime);
+
+
         return RegimeDto.toDto(regime);
     }
 
     @Override
+
     public Page<RegimeDto> retriveAllRegime(Pageable pageable) {
         Page<RecoveryRegime> page = repositoryRecoveryRegime.findAll(pageable);
         return page.map(RegimeDto::toDto);
     }
+
 
 
     @Override
@@ -76,7 +90,9 @@ public class RecoveryRegimeService implements IRecoveryRegimeService{
     @Override
     public void removeRegime(long regimeId) {
         RecoveryRegime regime = repositoryRecoveryRegime.findById(regimeId).orElseThrow(()
+
                 -> new IllegalArgumentException("Regime not found"));
+
 
         if (regime.getHealthReport() != null) {
 
@@ -109,6 +125,7 @@ public class RecoveryRegimeService implements IRecoveryRegimeService{
 
         return RegimeDto.toDto(updatedRegime);
     }
+
 
     @Override
     @Scheduled(fixedDelay = 60000)

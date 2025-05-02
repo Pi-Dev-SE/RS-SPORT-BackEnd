@@ -3,7 +3,8 @@ package tn.esprit.tic.se.spr01.SessionAndExercice.entities;
 import jakarta.persistence.*;
 import lombok.*;
 import tn.esprit.tic.se.spr01.SessionAndExercice.entities.Session;
-import tn.esprit.tic.se.spr01.entities.Player;
+import tn.esprit.tic.se.spr01.UserManagement.Entities.Player;
+
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

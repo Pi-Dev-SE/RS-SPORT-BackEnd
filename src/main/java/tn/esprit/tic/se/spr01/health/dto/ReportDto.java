@@ -3,6 +3,7 @@ package tn.esprit.tic.se.spr01.health.dto;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -20,6 +21,7 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ReportDto {
     long healthId;
+
     @NotNull(message = "injury type required !")
     String injuryType;
     @NotNull(message = "injury severity required !")
@@ -35,6 +37,7 @@ public class ReportDto {
     @NotNull(message = "medical notes required !")
     String medicalNotes;
     @NotNull(message = "status required !")
+
     TypeStatusHealth status;
     Long staffId;
     Long playerId;
@@ -49,8 +52,10 @@ public class ReportDto {
         }
         return ReportDto.builder()
                 .healthId(report.getHealthId())
+
                 .staffId(report.getMedicalStaff()!= null ? report.getMedicalStaff().getId() : null)
                 .playerId(report.getPlayer()!= null ? report.getPlayer().getId(): null)
+
                 .regimeId(report.getRecoveryRegime() != null ? report.getRecoveryRegime().getRegimeId() : null)
                 .injurySeverity(report.getInjurySeverity())
                 .injuryType(report.getInjuryType())
@@ -64,4 +69,6 @@ public class ReportDto {
                 .firstNamePlay(report.getPlayer() != null ? report.getPlayer().getFirstname() : null)
                 .build();
     }
+
 }
+

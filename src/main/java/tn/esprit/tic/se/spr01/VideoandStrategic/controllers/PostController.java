@@ -2,15 +2,30 @@ package tn.esprit.tic.se.spr01.VideoandStrategic.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import tn.esprit.tic.se.spr01.VideoandStrategic.dto.PostDto;
+
 import tn.esprit.tic.se.spr01.VideoandStrategic.entities.Post;
 import tn.esprit.tic.se.spr01.VideoandStrategic.entities.VideoAnalysis;
 import tn.esprit.tic.se.spr01.VideoandStrategic.entities.VideoAnalysisType;
 import tn.esprit.tic.se.spr01.VideoandStrategic.entities.VideoStatus;
+
+import tn.esprit.tic.se.spr01.VideoandStrategic.services.PostServiceImpl;
+
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+
 import tn.esprit.tic.se.spr01.VideoandStrategic.services.PostServiceImpl;
 
 
@@ -23,10 +38,12 @@ import java.util.List;
 @RequestMapping("/api/posts")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
+
 public class PostController {
 
     @Autowired
     private PostServiceImpl postService;
+
 
 
     @PostMapping("/createPost")

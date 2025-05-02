@@ -2,20 +2,23 @@ package tn.esprit.tic.se.spr01.health.services;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import tn.esprit.tic.se.spr01.entities.MedicalStaff;
-import tn.esprit.tic.se.spr01.entities.Player;
+
+import tn.esprit.tic.se.spr01.UserManagement.DTO.UserDto;
+import tn.esprit.tic.se.spr01.UserManagement.Entities.MedicalStaff;
+import tn.esprit.tic.se.spr01.UserManagement.Entities.Player;
+import tn.esprit.tic.se.spr01.UserManagement.Repositories.MedicalStaffRepository;
+import tn.esprit.tic.se.spr01.UserManagement.Repositories.PlayerRepository;
 import tn.esprit.tic.se.spr01.health.dto.ReportDto;
-import tn.esprit.tic.se.spr01.health.dto.UserDto;
 import tn.esprit.tic.se.spr01.health.entities.HealthReport;
-import tn.esprit.tic.se.spr01.health.repositories.MedicalStaffRepository;
 import tn.esprit.tic.se.spr01.health.repositories.RepositoryHealthReport;
 import tn.esprit.tic.se.spr01.health.repositories.RepositoryRecoveryRegime;
-import tn.esprit.tic.se.spr01.health.repositories.PlayerRepository;
+
 
 import java.util.List;
 
@@ -29,6 +32,9 @@ public class HealthReportService implements IHealthReportService{
     PlayerRepository playerRepository;
     RepositoryRecoveryRegime repositoryRecoveryRegime;
     EmailServiceImpl emailService;
+
+
+
 
 
     public List<UserDto> getMedicalStaff() {
@@ -48,6 +54,7 @@ public class HealthReportService implements IHealthReportService{
 
         Player player = playerRepository.findById(reportDto.getPlayerId())
                 .orElseThrow(() -> new EntityNotFoundException("Player not found with ID: " + reportDto.getPlayerId()));
+
 
         HealthReport report = HealthReport.toEntity(reportDto);
         report.setPlayer(player);
@@ -79,7 +86,9 @@ public class HealthReportService implements IHealthReportService{
 
     @Override
     public void removeReport(long healthId) {
+
         repositoryHealthReport.deleteById(healthId);
+
 
     }
 

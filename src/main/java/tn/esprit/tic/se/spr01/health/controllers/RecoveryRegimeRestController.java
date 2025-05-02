@@ -1,5 +1,6 @@
 package tn.esprit.tic.se.spr01.health.controllers;
 
+
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -12,13 +13,17 @@ import tn.esprit.tic.se.spr01.health.services.RecoveryRegimeService;
 import java.util.List;
 import java.util.Map;
 
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/RecoveryRegime")
+
 @CrossOrigin(origins = "http://localhost:4200")
+
 public class RecoveryRegimeRestController {
 
     RecoveryRegimeService recoveryRegimeService;
+
 
 
 
@@ -51,10 +56,12 @@ public class RecoveryRegimeRestController {
     }
     @PutMapping("/update-regime/{id}")
     public RegimeDto updateReport ( @Valid @RequestBody RegimeDto regimeDto,@PathVariable("id") long id){
+
         return recoveryRegimeService.updateRegime(regimeDto);
     }
 
     @DeleteMapping("/delete-regime/{regimeId}")
+
 
     public void deleteReport (@PathVariable ("regimeId") long regimeId){
         recoveryRegimeService.removeRegime(regimeId);
@@ -64,6 +71,7 @@ public class RecoveryRegimeRestController {
     public int remainingTime(@PathVariable ("regimeId") long regimeId){
         return recoveryRegimeService.remainingTime(regimeId);
     }
+
 
 
 }
