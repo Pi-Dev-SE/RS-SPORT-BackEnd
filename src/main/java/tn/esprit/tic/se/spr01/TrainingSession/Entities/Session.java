@@ -29,25 +29,23 @@ public class Session implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long sessionId;
     private LocalDate startDate;
-
     private LocalDate endDate;
+
+    @NotNull(message = "L'heure de la session est obligatoire")
     private LocalTime time;
     @Column(columnDefinition = "TEXT", length = 2000)
-    @NotNull
     private String objective;
     @Enumerated(EnumType.STRING)
-    @NotNull
     private SessionStatus  sessionStatus ;
     @Enumerated(EnumType.STRING)
-    @NotNull
     private PlayerAvailability playerAvailability;
+    private String city;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name = "session_exercise",
             joinColumns = @JoinColumn(name = "sessionId"),
             inverseJoinColumns = @JoinColumn(name = "exerciseId"))
-    //@JsonManagedReference
     @JsonIgnore
     private List<Exercise> exercises;
 
@@ -57,7 +55,12 @@ public class Session implements Serializable {
     @JsonIgnore
     private Coach coach;
 
+
+
     public long getId() {
         return sessionId != null ? sessionId : 0L;
     }
+
+
+
 }

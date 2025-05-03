@@ -12,4 +12,5 @@ public interface ISessionService {
      Session createSession(Session session, Long coachId);
     void addExercisesToSession(Long sessionId, List<Exercise> newExercise); // List au lieu de Set
     Session update(Session session,long id);
+
 }

@@ -1,5 +1,6 @@
 package tn.esprit.tic.se.spr01.UserManagement.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -39,11 +40,14 @@ public class User implements Serializable {
     private LocalDate dateOfBirth;
     private boolean enabled;
     private boolean accountLocked;
-
+@JsonIgnore
     @ManyToMany
     private Set<Chat> chats;
+    @JsonIgnore
+
     @ManyToMany
     private Set<Notification> notifications;
+
 
     public void setFirstname(String firstname) {
         this.firstname = firstname;

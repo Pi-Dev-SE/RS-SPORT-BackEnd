@@ -14,4 +14,6 @@ public interface TeamRepository extends JpaRepository<Team, Integer> {
     Optional<Team> findByCoach(Coach coach);
     List<Team> findByClub(Club club);
     Optional<Team> findByTeamName(String teamName);
+
+
 }
