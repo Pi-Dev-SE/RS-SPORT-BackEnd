@@ -9,6 +9,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import tn.esprit.tic.se.spr01.Chat.messageroom.MessageRoom;
 import tn.esprit.tic.se.spr01.Chat.messageroommember.MessageRoomMember;
+import tn.esprit.tic.se.spr01.Communication.Entities.Chat;
+import tn.esprit.tic.se.spr01.Communication.Entities.Notification;
 import tn.esprit.tic.se.spr01.utils.FileUtil;
 
 
@@ -17,6 +19,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @SuperBuilder
 @Getter
@@ -75,6 +78,15 @@ public class User implements Serializable , UserDetails {
     public String getAvatarShortUrl() {
         return "avatars/" + avatarUrl;
     }
+
+    @JsonIgnore
+    @ManyToMany
+    private Set<Chat> chats;
+    @JsonIgnore
+    @ManyToMany
+    private Set<Notification> notifications;
+
+
 
     public void setFirstname(String firstname) {
         this.firstname = firstname;

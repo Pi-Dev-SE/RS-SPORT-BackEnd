@@ -15,6 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+
 @DiscriminatorValue("MEDICAL_STAFF")
 public class MedicalStaff extends User implements Serializable {
     private String specializationMed;  // Spécialisation du personnel médical (ex: "Médecin", "Kinésithérapeute")
@@ -24,11 +25,5 @@ public class MedicalStaff extends User implements Serializable {
     @JsonIgnore
     List<HealthReport> healthReportList = new ArrayList<>();
 
-    public void setSpecialization(String specialization) {
-        this.specializationMed = specialization;
-    }
 
-    public void setLicenseNumber(String licenseNumber) {
-        this.licenseNumber = licenseNumber;
-    }
 }

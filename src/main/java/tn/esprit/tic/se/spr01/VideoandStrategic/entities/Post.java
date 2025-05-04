@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
+
 import java.util.List;
 
 @Entity
@@ -19,31 +19,21 @@ import java.util.List;
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idPost;
+    private Long id;
 
     private String clubName;
 
-    @Column(length = 5000)
+    private String postedBy;
+
     private String content;
 
-
     private String img;
-
 
     private Date date;
 
 
-    private int likeCount;
 
-
-    private int viewCount;
-
-    @ElementCollection
-    private List<String> tags;
-
-
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
-
 
 }

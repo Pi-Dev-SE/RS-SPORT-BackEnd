@@ -1,18 +1,21 @@
+
 package tn.esprit.tic.se.spr01.UserManagement.Entities;
 
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 import tn.esprit.tic.se.spr01.UserManagement.Entities.User;
 
 import java.io.Serializable;
 
 @Getter
 @Setter
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-
 
 
 @DiscriminatorValue("ADMIN")

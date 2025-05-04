@@ -1,3 +1,4 @@
+
 package tn.esprit.tic.se.spr01.TeamandPlayer.entities;
 
 import jakarta.persistence.*;
@@ -7,11 +8,13 @@ import lombok.experimental.FieldDefaults;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+
 import java.util.List;
 
 @Entity
 @Getter
 @Setter
+
 
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -23,6 +26,7 @@ public class Club implements Serializable {
     int clubId;
 
     String clubName;
+
 
 
 

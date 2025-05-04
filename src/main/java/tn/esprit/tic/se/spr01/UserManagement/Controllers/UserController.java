@@ -53,6 +53,7 @@ public class UserController {
     }
 
 
+
     @PostMapping
     public ResponseEntity<UserDto> login(@RequestBody final UserDto userDTO) {
         return ResponseEntity.ok(userService.login(userDTO));
@@ -114,6 +115,7 @@ public class UserController {
                                                 @RequestParam("avatar") MultipartFile avatar) {
         return ResponseEntity.ok(userService.updateAvatar(email, avatar));
     }
+
 
 
 

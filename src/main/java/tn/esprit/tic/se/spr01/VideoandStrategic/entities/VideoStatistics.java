@@ -21,9 +21,12 @@ public class VideoStatistics {
     private float SprintDistance;
     private float TopSpeed;
     private float PassAccuracy;
+    private int  PassNbr;
+    private float MinSpeed;
+
+
 
     @OneToOne(mappedBy="videoStatistics")
     @JsonIgnore
     private VideoAnalysis videoAnalysisS;
-
 }

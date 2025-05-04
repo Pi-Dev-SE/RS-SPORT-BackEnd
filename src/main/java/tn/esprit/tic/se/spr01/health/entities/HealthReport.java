@@ -6,17 +6,16 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+
 import tn.esprit.tic.se.spr01.UserManagement.Entities.MedicalStaff;
 import tn.esprit.tic.se.spr01.UserManagement.Entities.Player;
 import tn.esprit.tic.se.spr01.health.dto.ReportDto;
-import tn.esprit.tic.se.spr01.health.entities.TypeInjurySeverity;
-import tn.esprit.tic.se.spr01.health.entities.TypeStatusHealth;
-import tn.esprit.tic.se.spr01.health.entities.RecoveryRegime;
+
 
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.List;
 
 
 
@@ -33,26 +32,23 @@ public class HealthReport implements Serializable {
  @Id
  @GeneratedValue(strategy = GenerationType.IDENTITY)
  long healthId;
-
  String injuryType;
  @Enumerated(EnumType.STRING)
-
  TypeInjurySeverity injurySeverity;
-
  LocalDate diagnosisDate;
-
  LocalDate expectedRecoveryDate;
  String recoveryPlan;
  String fitnessLevel;
  String medicalNotes;
  @Enumerated(EnumType.STRING)
-
  TypeStatusHealth status;
  @OneToOne (cascade = CascadeType.ALL)
  RecoveryRegime recoveryRegime;
  @ManyToOne
  MedicalStaff medicalStaff;
- @OneToOne(mappedBy = "healthReport", fetch = FetchType.LAZY)
+
+ @ManyToOne ( fetch = FetchType.EAGER)
+
  @JsonIgnore
  Player player;
 
@@ -74,6 +70,5 @@ public class HealthReport implements Serializable {
            .status(dto.getStatus())
            .build();
  }
-
 
 }

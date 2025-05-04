@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import tn.esprit.tic.se.spr01.Exercises.Entities.Exercise;
 import tn.esprit.tic.se.spr01.TeamandPlayer.entities.Team;
 import tn.esprit.tic.se.spr01.UserManagement.Entities.Coach;
 import tn.esprit.tic.se.spr01.UserManagement.Entities.Player;
@@ -55,6 +56,15 @@ public class TacticsBoard implements Serializable {
 
     @Version
     private Long version = 0L;
+
+
+    @ManyToMany
+    @JoinTable(
+            name = "tactics_board_exercises",  // Nom de la table de jointure
+            joinColumns = @JoinColumn(name = "tactics_board_id"),  // Clé étrangère pour TacticsBoard
+            inverseJoinColumns = @JoinColumn(name = "exercise_id")  // Clé étrangère pour Exercise
+    )
+    private Set<Exercise> exercises;
 
     public void setName(String name) {
         this.name = name;

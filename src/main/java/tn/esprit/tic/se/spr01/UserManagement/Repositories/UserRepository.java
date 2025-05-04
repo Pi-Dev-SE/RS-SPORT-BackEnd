@@ -3,6 +3,7 @@ package tn.esprit.tic.se.spr01.UserManagement.Repositories;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import tn.esprit.tic.se.spr01.UserManagement.Entities.Coach;
 import tn.esprit.tic.se.spr01.UserManagement.Entities.User;
 import tn.esprit.tic.se.spr01.UserManagement.Entities.Status;
 
@@ -35,5 +36,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findTop20ByFirstnameContainingIgnoreCase(String firstname);
 
 
+
+    Optional<Coach> findCoachById(Long id);
+
+
+    @Query("SELECT u FROM User u WHERE TYPE(u) = Coach")
+    List<Coach> findAllCoaches();
 
 }

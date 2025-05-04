@@ -15,4 +15,6 @@ public class VideoStatisticsDto {
     private float sprintDistance;
     private float topSpeed;
     private float passAccuracy;
+    private int  PassNbr;
+    private float MinSpeed;
 }
