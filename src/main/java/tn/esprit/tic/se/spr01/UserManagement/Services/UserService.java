@@ -63,11 +63,17 @@ public class UserService implements iUserService{
         }
         userRepository.deleteById(id);
     }
+    
+    // Rechercher un utilisateur par email
+    @Override
+    public Optional<User> getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
 
 
     public UserDto login(final UserDto userDTO) {
-        User user = userRepository.findByFirstname(userDTO.getFirstname())
-                .orElseGet(() -> createUser(userDTO.getFirstname(), userDTO.getPassword()));
+        User user = userRepository.findByEmail(userDTO.getEmail())
+                .orElseGet(() -> createUser(userDTO.getEmail(), userDTO.getPassword()));
 
         validatePassword(user, userDTO.getPassword());
 
@@ -82,9 +88,9 @@ public class UserService implements iUserService{
     }
 
 
-    public User createUser(String firstname, String password) {
+    public User createUser(String email, String password) {
         User user = User.builder()
-                .firstname(firstname)
+                .email(email)
                 .password(password)
                 .status(Status.ONLINE)
                 .lastLogin(LocalDateTime.now())
@@ -94,7 +100,7 @@ public class UserService implements iUserService{
 
 
     public UserDto connect(UserDto userDTO) {
-        Optional<User> user = userRepository.findByFirstname(userDTO.getFirstname());
+        Optional<User> user = userRepository.findByEmail(userDTO.getEmail());
         user.ifPresent(u -> {
             u.setStatus(Status.ONLINE);
             userRepository.save(u);
@@ -103,8 +109,8 @@ public class UserService implements iUserService{
     }
 
 
-    public UserDto logout(String firstname) {
-        Optional<User> user = userRepository.findByFirstname(firstname);
+    public UserDto logout(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
         user.ifPresent(u -> {
             u.setStatus(Status.OFFLINE);
             u.setLastLogin(LocalDateTime.now());
@@ -153,8 +159,8 @@ public class UserService implements iUserService{
 
 
 
-    public Status getUserStatus(String firstname) {
-        return userRepository.findByFirstname(firstname)
+    public Status getUserStatus(String email) {
+        return userRepository.findByEmail(email)
                 .map(User::getStatus)
                 .orElse(Status.OFFLINE);
     }
@@ -171,9 +177,9 @@ public class UserService implements iUserService{
 //    }
 
 
-    public UserDto updateAvatar(String firstname, MultipartFile avatar) {
+    public UserDto updateAvatar(String email, MultipartFile avatar) {
         // upload avatar to storage
-        final Optional<User> user = userRepository.findByFirstname(firstname);
+        final Optional<User> user = userRepository.findByEmail(email);
         if (user.isPresent()) {
             if(user.get().getAvatarUrl() != null) {
                 try {

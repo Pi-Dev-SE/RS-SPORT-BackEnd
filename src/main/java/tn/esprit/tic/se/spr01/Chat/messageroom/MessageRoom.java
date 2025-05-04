@@ -39,11 +39,14 @@ public class MessageRoom {
     @JoinColumn(name = "createdBy",             // colonne de message_content
             referencedColumnName = "firstname",
             columnDefinition = "VARCHAR(255)"  )
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private User createdBy;
 
     @OneToMany(mappedBy = "messageRoom", cascade = CascadeType.ALL)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private List<MessageRoomMember> members;
 
     @OneToMany(mappedBy = "messageRoom", cascade = CascadeType.ALL)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private List<MessageContent> messageContents;
 }

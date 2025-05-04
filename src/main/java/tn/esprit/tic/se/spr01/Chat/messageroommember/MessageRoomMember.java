@@ -21,6 +21,7 @@ public class MessageRoomMember {
     @Id
     @ManyToOne
     @JoinColumn(name = "message_room_id")
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private MessageRoom messageRoom;
 
     @Id
@@ -28,6 +29,7 @@ public class MessageRoomMember {
     @JoinColumn(name = "firstname",             // colonne de message_content
             referencedColumnName = "firstname",
             columnDefinition = "VARCHAR(255)"  )
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private User user;
 
     private Boolean isAdmin;

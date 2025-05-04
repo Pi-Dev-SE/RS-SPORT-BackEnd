@@ -8,11 +8,13 @@ import tn.esprit.tic.se.spr01.UserManagement.Entities.User;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface iUserService {
 
     User addUser(User user);
     User getUserById(Long id);
+    Optional<User> getUserByEmail(String email);
 
     User updateUser(Long id, User user);
     void deleteUser(Long id);

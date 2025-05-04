@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import tn.esprit.tic.se.spr01.Chat.messageroom.MessageRoom;
 import tn.esprit.tic.se.spr01.Chat.messageroommember.MessageRoomMember;
 import tn.esprit.tic.se.spr01.utils.FileUtil;
@@ -12,6 +15,7 @@ import tn.esprit.tic.se.spr01.utils.FileUtil;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 @SuperBuilder
@@ -25,7 +29,7 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "dtype", discriminatorType = DiscriminatorType.STRING)
 
-public class User implements Serializable {
+public class User implements Serializable , UserDetails {
 
 
 
@@ -44,13 +48,19 @@ public class User implements Serializable {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @JsonIgnore
+    @Enumerated(EnumType.STRING)
+    UserRole roleUser;
+
     private LocalDateTime lastLogin = LocalDateTime.now();
 
     private String avatarUrl;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "createdBy")
     private List<MessageRoom> messageRoom;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private List<MessageRoomMember> messageRoomMember;
 
@@ -99,6 +109,34 @@ public class User implements Serializable {
     }
 
 
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(roleUser.name()));
+    }
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 
 
 

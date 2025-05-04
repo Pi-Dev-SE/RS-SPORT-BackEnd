@@ -70,7 +70,7 @@ public class UserController {
     @MessageMapping("/user/disconnect")
     @SendTo("/topic/active")
     public UserDto disconnect(@Payload final UserDto userDTO) {
-        return userService.logout(userDTO.getFirstname());
+        return userService.logout(userDTO.getEmail());
     }
 
 
@@ -104,15 +104,15 @@ public class UserController {
 
 
     @GetMapping("/status/{firstname}")
-    public ResponseEntity<Status> getUserStatus(@PathVariable final String firstname) {
-        return ResponseEntity.ok(userService.getUserStatus(firstname));
+    public ResponseEntity<Status> getUserStatus(@PathVariable final String email) {
+        return ResponseEntity.ok(userService.getUserStatus(email));
     }
 
 
     @PostMapping("/avatar")
-    public ResponseEntity<UserDto> updateAvatar(@RequestParam("firstname") String firstname,
+    public ResponseEntity<UserDto> updateAvatar(@RequestParam("email") String email,
                                                 @RequestParam("avatar") MultipartFile avatar) {
-        return ResponseEntity.ok(userService.updateAvatar(firstname, avatar));
+        return ResponseEntity.ok(userService.updateAvatar(email, avatar));
     }
 
 

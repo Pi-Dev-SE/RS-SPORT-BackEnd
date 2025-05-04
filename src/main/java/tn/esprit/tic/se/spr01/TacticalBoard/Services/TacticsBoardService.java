@@ -184,27 +184,27 @@ public class TacticsBoardService implements iTacticsBoardService{
         existingPlayer.setTacticsBoard(tacticsBoard);
         return playerRepository.save(existingPlayer);
     }
-    
+
     @Override
     public TacticsEngagementData getEngagementData() {
         // Récupérer le nombre total de tableaux tactiques
         long totalBoards = tacticsBoardRepository.count();
-        
+
         // Récupérer le nombre de tableaux modifiés (version > 0)
         long modifiedBoards = tacticsBoardRepository.countByVersionGreaterThan(0L);
-        
+
         // Calculer le nombre de tableaux non modifiés
         long unchangedBoards = totalBoards - modifiedBoards;
-        
+
         return new TacticsEngagementData((int) modifiedBoards, (int) unchangedBoards);
     }
-    
+
     @Override
     public List<TacticsMonthlyActivity> getMonthlyActivityData() {
         // Récupérer les données d'activité mensuelle depuis le repository
         return tacticsBoardRepository.getMonthlyActivityData();
     }
-    
+
     @Override
     public List<TacticsPlayerCount> getPlayerCountByBoard() {
         // Récupérer le nombre de joueurs par tableau tactique

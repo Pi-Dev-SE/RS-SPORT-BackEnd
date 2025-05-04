@@ -13,6 +13,8 @@ import tn.esprit.tic.se.spr01.UserManagement.Entities.Status;
 public class UserDto{
         private String firstname;
         private String password;
+        private String email;
+
         private Status status;
         private String avatarUrl;
 
