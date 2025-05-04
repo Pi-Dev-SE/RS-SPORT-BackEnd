@@ -11,9 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import tn.esprit.tic.se.spr01.VideoandStrategic.dto.PostDto;
 
 import tn.esprit.tic.se.spr01.VideoandStrategic.entities.Post;
-import tn.esprit.tic.se.spr01.VideoandStrategic.entities.VideoAnalysis;
-import tn.esprit.tic.se.spr01.VideoandStrategic.entities.VideoAnalysisType;
-import tn.esprit.tic.se.spr01.VideoandStrategic.entities.VideoStatus;
+
 
 import tn.esprit.tic.se.spr01.VideoandStrategic.services.PostServiceImpl;
 
