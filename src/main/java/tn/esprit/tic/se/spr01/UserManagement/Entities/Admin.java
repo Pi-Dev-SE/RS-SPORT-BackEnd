@@ -12,11 +12,10 @@ import java.io.Serializable;
 
 @Getter
 @Setter
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-
-
 
 
 @DiscriminatorValue("ADMIN")

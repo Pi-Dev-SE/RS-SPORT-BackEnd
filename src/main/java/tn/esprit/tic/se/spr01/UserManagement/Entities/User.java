@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 @SuperBuilder
 @Getter
 @Setter
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -31,7 +32,8 @@ import java.util.stream.Collectors;
 public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long Id;
+
     private String firstname;
     private String lastname;
     @Column(unique=true)
@@ -41,6 +43,8 @@ public class User implements Serializable {
     private boolean enabled;
     private boolean accountLocked;
 @JsonIgnore
+
+
     @ManyToMany
     private Set<Chat> chats;
     @JsonIgnore

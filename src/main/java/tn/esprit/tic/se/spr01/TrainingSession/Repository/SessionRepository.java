@@ -17,7 +17,7 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
     List<Session> findByCoach(Coach coach);
     @Query("SELECT DISTINCT s FROM Session s JOIN s.exercises e WHERE s.coach = :coach AND e.team = :team")
     List<Session> findByTeamAndCoach(@Param("team") Team team, @Param("coach") Coach coach);
-    @Query("SELECT s FROM Session s WHERE s.coach.id = :coachId AND s.startDate = :date")
+    @Query("SELECT s FROM Session s WHERE s.coach.Id = :coachId AND s.startDate = :date")
     List<Session> findByCoachIdAndStartDate(@Param("coachId") Long coachId, @Param("date") LocalDate date);
     List<Session> findByStartDateBetween(LocalDate startDate, LocalDate endDate);
 

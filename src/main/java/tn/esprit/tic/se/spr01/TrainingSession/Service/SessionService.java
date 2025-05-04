@@ -880,98 +880,18 @@ public class SessionService implements ISessionService {
     }
 }
 
-class OpenWeatherResponse {
-    private Main main;
-    private List<Weather> weather;
-    private Clouds clouds;
 
-    public Main getMain() { return main; }
-    public void setMain(Main main) { this.main = main; }
 
-    public List<Weather> getWeather() { return weather; }
-    public void setWeather(List<Weather> weather) { this.weather = weather; }
 
-    public Clouds getClouds() { return clouds; }
-    public void setClouds(Clouds clouds) { this.clouds = clouds; }
-}
 
-class Main {
-    private double temp;
 
-    public double getTemp() { return temp; }
-    public void setTemp(double temp) { this.temp = temp; }
-}
 
-class Weather {
-    private String main;
 
-    public String getMain() { return main; }
-    public void setMain(String main) { this.main = main; }
-}
 
-class Clouds {
-    private int all;
 
-    public int getAll() { return all; }
-    public void setAll(int all) { this.all = all; }
-}
 
-class OpenWeatherForecastResponse {
-    private List<ForecastEntry> list;
 
-    public List<ForecastEntry> getList() { return list; }
-    public void setList(List<ForecastEntry> list) { this.list = list; }
-}
 
-class ForecastEntry {
-    private String dt_txt;
-    private Main main;
-    private List<Weather> weather;
-    private Clouds clouds;
-    private Rain rain;
 
-    public String getDt_txt() { return dt_txt; }
-    public void setDt_txt(String dt_txt) { this.dt_txt = dt_txt; }
 
-    public Main getMain() { return main; }
-    public void setMain(Main main) { this.main = main; }
 
-    public List<Weather> getWeather() { return weather; }
-    public void setWeather(List<Weather> weather) { this.weather = weather; }
-
-    public Clouds getClouds() { return clouds; }
-    public void setClouds(Clouds clouds) { this.clouds = clouds; }
-
-    public Rain getRain() { return rain; }
-    public void setRain(Rain rain) { this.rain = rain; }
-}
-
-class Rain {
-    private Double _3h; // Precipitation volume for the last 3 hours, mm
-
-    public Double get3h() { return _3h != null ? _3h : 0.0; }
-    public void set3h(Double _3h) { this._3h = _3h; }
-}
-
-class TimelineSegment {
-    private String label;
-    private int duration;
-    private String color;
-    private int start;
-    private int end;
-
-    public String getLabel() { return label; }
-    public void setLabel(String label) { this.label = label; }
-
-    public int getDuration() { return duration; }
-    public void setDuration(int duration) { this.duration = duration; }
-
-    public String getColor() { return color; }
-    public void setColor(String color) { this.color = color; }
-
-    public int getStart() { return start; }
-    public void setStart(int start) { this.start = start; }
-
-    public int getEnd() { return end; }
-    public void setEnd(int end) { this.end = end; }
-}

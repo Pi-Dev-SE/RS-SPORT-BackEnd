@@ -17,6 +17,9 @@ import java.util.Date;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
+
+@RequiredArgsConstructor
+
 public class PlayerStatistics implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +27,9 @@ public class PlayerStatistics implements Serializable {
     float performanceRate ;
     Date date ;
     int goalsScored ;
-    int assists ;
+
+    int assits ;
+
 
 
 

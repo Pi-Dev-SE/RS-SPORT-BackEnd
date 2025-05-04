@@ -1,6 +1,9 @@
 package tn.esprit.tic.se.spr01.Exercises.Entities;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -34,9 +37,8 @@ public class Exercise implements Serializable {
     @Enumerated(EnumType.STRING)
     private ExerciseType exerciseType;
     private String intensity;
-    @Column(name = "is_indoor", nullable = false)
-    @JsonProperty("indoor")
     private boolean isIndoor;
+
     private String description;
 
     private String duration;
