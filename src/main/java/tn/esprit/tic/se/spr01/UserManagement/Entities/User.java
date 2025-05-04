@@ -4,36 +4,42 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import tn.esprit.tic.se.spr01.Chat.messageroom.MessageRoom;
+import tn.esprit.tic.se.spr01.Chat.messageroommember.MessageRoomMember;
 import tn.esprit.tic.se.spr01.Communication.Entities.Chat;
 import tn.esprit.tic.se.spr01.Communication.Entities.Notification;
+import tn.esprit.tic.se.spr01.utils.FileUtil;
 
 
 import java.io.Serializable;
-import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @SuperBuilder
 @Getter
 @Setter
-
+@Builder
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "dtype", discriminatorType = DiscriminatorType.STRING)
-public class User implements Serializable {
+
+public class User implements Serializable , UserDetails {
+
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
-
+    private Long id;
+    @Column(name = "firstname", length = 255, nullable = false, unique = true)
     private String firstname;
     private String lastname;
     @Column(unique=true)
@@ -42,15 +48,44 @@ public class User implements Serializable {
     private LocalDate dateOfBirth;
     private boolean enabled;
     private boolean accountLocked;
-@JsonIgnore
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
+    @JsonIgnore
+    @Enumerated(EnumType.STRING)
+    UserRole roleUser;
 
+    private LocalDateTime lastLogin = LocalDateTime.now();
+
+    private String avatarUrl;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "createdBy")
+    private List<MessageRoom> messageRoom;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private List<MessageRoomMember> messageRoomMember;
+
+    public String getAvatarUrl() {
+        if(avatarUrl == null || avatarUrl.isEmpty()) {
+            return null;
+        }
+        return FileUtil.getFileUrl("avatars", avatarUrl);
+    }
+
+    @JsonIgnore
+    public String getAvatarShortUrl() {
+        return "avatars/" + avatarUrl;
+    }
+
+    @JsonIgnore
     @ManyToMany
     private Set<Chat> chats;
     @JsonIgnore
-
     @ManyToMany
     private Set<Notification> notifications;
+
 
 
     public void setFirstname(String firstname) {
@@ -84,6 +119,37 @@ public class User implements Serializable {
     public String getEmail() {
         return email;
     }
+
+
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(roleUser.name()));
+    }
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
 
 
 }

@@ -1,23 +1,37 @@
 package tn.esprit.tic.se.spr01.UserManagement.DTO;
 
+
+import lombok.Data;
+import tn.esprit.tic.se.spr01.UserManagement.Entities.User;
+import tn.esprit.tic.se.spr01.UserManagement.Entities.Status;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import tn.esprit.tic.se.spr01.UserManagement.Entities.User;
+/**
+ * DTO for {@link User}
+ */
 
+@Data
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserDto {
+public class UserDto{
+        private String firstname;
+        private String password;
+        private String email;
+        private Status status;
+        private String avatarUrl;
 
-    Long Id;
-    String firstName;
-    String lastName;
-   String position;
-    Long clubId;
-   Long teamId;
+        private Long Id;
+        private String lastName;
+        private String position;
+        private Long clubId;
+        private Long teamId;
+
+
+
+
 
     public static tn.esprit.tic.se.spr01.UserManagement.DTO.UserDto toDto(User entity) {
         if (entity == null) {
@@ -25,7 +39,7 @@ public class UserDto {
 
         }
         return tn.esprit.tic.se.spr01.UserManagement.DTO.UserDto.builder()
-                .firstName(entity.getFirstname())
+                .firstname(entity.getFirstname())
                 .lastName(entity.getLastname())
                 .Id(entity.getId())
                 .build();
@@ -34,3 +48,4 @@ public class UserDto {
 
 
 }
+

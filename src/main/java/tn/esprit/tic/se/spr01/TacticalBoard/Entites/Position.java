@@ -1,10 +1,13 @@
 package tn.esprit.tic.se.spr01.TacticalBoard.Entites;
 
 import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.NotNull;
 
 @Embeddable
 public class Position {
+    @NotNull
     private int x;
+    @NotNull
     private int y;
 
     public Position() {}
