@@ -1,12 +1,10 @@
 package tn.esprit.tic.se.spr01.VideoandStrategic.services;
 
-
 import jakarta.persistence.EntityNotFoundException;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import tn.esprit.tic.se.spr01.VideoandStrategic.dto.CommentDto;
 import tn.esprit.tic.se.spr01.VideoandStrategic.entities.Comment;
 import tn.esprit.tic.se.spr01.VideoandStrategic.entities.Post;
 import tn.esprit.tic.se.spr01.VideoandStrategic.repositories.CommentRepository;
@@ -22,7 +20,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
-
     @Autowired
     private CommentRepository commentRepository;
 
@@ -64,5 +61,4 @@ public class CommentServiceImpl implements CommentService {
     public void deleteComment(Long id) {
         commentRepository.deleteById(id);
     }
-
 }

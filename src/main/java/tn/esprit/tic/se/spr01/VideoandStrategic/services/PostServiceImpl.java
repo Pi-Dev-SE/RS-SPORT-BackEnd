@@ -1,8 +1,9 @@
 package tn.esprit.tic.se.spr01.VideoandStrategic.services;
 
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import tn.esprit.tic.se.spr01.VideoandStrategic.entities.Post;
@@ -116,7 +117,10 @@ public class PostServiceImpl implements PostService {
     }
 
 
-
+    @Override
+    public Page<Post> getAllPostsPaginated(Pageable pageable) {
+        return postRepository.findAll(pageable);
+    }
 
 
 }

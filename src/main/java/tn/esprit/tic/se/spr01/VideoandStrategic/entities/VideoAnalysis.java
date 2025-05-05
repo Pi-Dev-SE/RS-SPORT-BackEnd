@@ -1,10 +1,8 @@
 package tn.esprit.tic.se.spr01.VideoandStrategic.entities;
 
 import jakarta.persistence.*;
-
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,9 +22,7 @@ public class VideoAnalysis {
 
     private String title;
 
-
     private String description;
-
 
     private String videoUrl;
 
@@ -38,5 +34,4 @@ public class VideoAnalysis {
 
     @OneToOne
     private VideoStatistics videoStatistics;
-
 }

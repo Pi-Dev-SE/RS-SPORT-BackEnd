@@ -14,6 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/annotations")
 @RequiredArgsConstructor
+@CrossOrigin("*")
 public class VideoAnnotationController {
 
     private final VideoAnnotationServiceImpl videoAnnotationService;
