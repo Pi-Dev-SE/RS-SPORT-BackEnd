@@ -10,7 +10,7 @@ import tn.esprit.tic.se.spr01.UserManagement.Entities.Coach;
 import tn.esprit.tic.se.spr01.UserManagement.Services.iCoachService;
 
 @RestController
-@RequestMapping("/coaches")
+@RequestMapping("/coach")
 public class CoachController {
 
     final

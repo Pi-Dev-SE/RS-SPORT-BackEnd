@@ -10,7 +10,7 @@ import tn.esprit.tic.se.spr01.UserManagement.Entities.Admin;
 import tn.esprit.tic.se.spr01.UserManagement.Services.iAdminService;
 
 @RestController
-@RequestMapping("/admins")
+@RequestMapping("/admin")
 public class AdminController {
 
 
