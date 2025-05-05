@@ -28,9 +28,9 @@ public class ReportDto {
     TypeInjurySeverity injurySeverity;
     @NotNull(message = "diagnosis date required !")
     LocalDate diagnosisDate;
-    @Future(message = "The recovery date must be after the diagnosis date !")
+
     LocalDate expectedRecoveryDate;
-    @NotNull(message = "recovery Plan required !")
+
     String recoveryPlan;
     @Pattern(regexp = "^(Low|Medium|High)$", message = "Fitness Level must be : 'Low', 'Medium' ou 'High'.")
     String fitnessLevel;

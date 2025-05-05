@@ -19,12 +19,12 @@ public class UserDto {
     Long clubId;
    Long teamId;
 
-    public static tn.esprit.tic.se.spr01.UserManagement.DTO.UserDto toDto(User entity) {
+    public static UserDto toDto(User entity) {
         if (entity == null) {
             return null;
 
         }
-        return tn.esprit.tic.se.spr01.UserManagement.DTO.UserDto.builder()
+        return UserDto.builder()
                 .firstName(entity.getFirstname())
                 .lastName(entity.getLastname())
                 .Id(entity.getId())

@@ -3,10 +3,13 @@ package tn.esprit.tic.se.spr01.health.services;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import tn.esprit.tic.se.spr01.UserManagement.DTO.UserDto;
@@ -20,8 +23,12 @@ import tn.esprit.tic.se.spr01.health.repositories.RepositoryHealthReport;
 import tn.esprit.tic.se.spr01.health.repositories.RepositoryRecoveryRegime;
 
 
+import java.io.IOException;
+import java.nio.file.*;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -32,6 +39,7 @@ public class HealthReportService implements IHealthReportService{
     PlayerRepository playerRepository;
     RepositoryRecoveryRegime repositoryRecoveryRegime;
     EmailServiceImpl emailService;
+    private final Path baseDir = Paths.get("medical-archives");
 
 
 
@@ -109,5 +117,47 @@ public class HealthReportService implements IHealthReportService{
         return ReportDto.toDto(repositoryHealthReport.save(report));
     }
 
+    public void uploadReport(MultipartFile file, String playerName) throws IOException {
+        String sanitizedPlayerName = playerName.trim().replaceAll("[^a-zA-Z0-9]", "_").toLowerCase();
+        Path playerDir = baseDir.resolve(sanitizedPlayerName);
+
+        if (!Files.exists(playerDir)) {
+            Files.createDirectories(playerDir);
+        }
+
+        Path filePath = playerDir.resolve(file.getOriginalFilename());
+        Files.write(filePath, file.getBytes());
+    }
+
+    public Map<String, List<String>> listReports() throws IOException {
+        Map<String, List<String>> archives = new HashMap<>();
+
+        if (Files.exists(baseDir)) {
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(baseDir)) {
+                for (Path playerDir : stream) {
+                    if (Files.isDirectory(playerDir)) {
+                        List<String> files = Files.list(playerDir)
+                                .map(Path::getFileName)
+                                .map(Path::toString)
+                                .collect(Collectors.toList());
+                        archives.put(playerDir.getFileName().toString(), files);
+                    }
+                }
+            }
+        }
+
+        return archives;
+    }
+
+    public Resource downloadReport(String player, String filename) throws IOException {
+        Path file = baseDir.resolve(player).resolve(filename);
+        Resource resource = new UrlResource(file.toUri());
+
+        if (resource.exists()) {
+            return resource;
+        } else {
+            throw new NoSuchFileException("File not found: " + filename);
+        }
+    }
 
 }
