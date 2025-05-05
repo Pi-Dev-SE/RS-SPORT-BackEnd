@@ -20,7 +20,14 @@ public interface PlayerRepository extends JpaRepository<Player, Long> {
 
     @Transactional
     @Modifying
-    @Query("UPDATE Player p SET p.team = null WHERE p.id = :playerId")  // ✅ Fixed Query
+    @Query("UPDATE Player p SET p.team = null WHERE p.Id = :playerId")  // ✅ Fixed Query
     void removePlayerFromTeam(Long playerId);
     List<Player> findByClubAndTeam(Club club, Team team);
+
+    @Query("SELECT p FROM Player p WHERE p.club.clubId = :clubId")
+    List<Player> findPlayersByClubId(Integer clubId);
+    List<Player> findByClubAndTeamIsNull(Club club);
+
+
+
 }

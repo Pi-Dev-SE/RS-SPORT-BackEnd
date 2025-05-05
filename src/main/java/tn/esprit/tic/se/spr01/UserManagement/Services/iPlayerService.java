@@ -12,4 +12,8 @@ public interface iPlayerService {
     List<Player> getAllPlayers();
     Player updatePlayer(Long id, Player player);
     void deletePlayer(Long id);
+    Object getPlayers();
+    List<Player> getPlayersByClubId(Integer clubId);
+    public List<Player> getUnassignedPlayersByClub(int clubId);
+
 }
