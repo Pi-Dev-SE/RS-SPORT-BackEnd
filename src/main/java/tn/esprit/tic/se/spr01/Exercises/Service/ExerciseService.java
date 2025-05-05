@@ -2,8 +2,10 @@ package tn.esprit.tic.se.spr01.Exercises.Service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import tn.esprit.tic.se.spr01.Exercises.Entities.Exercise;
 import tn.esprit.tic.se.spr01.Exercises.Entities.Rating;
@@ -92,6 +94,12 @@ public class ExerciseService implements IExerciseService {
         return exerciseRepository.save(existingExercise);
     }
 
+    public Page<Exercise> findAll(int page, int size) {
+        // Ajouter un tri par displayOrder pour correspondre au comportement du frontend
+        Pageable pageable = PageRequest.of(page, size, Sort.by("displayOrder").ascending());
+        return exerciseRepository.findAll(pageable);
+    }
+
 
     public double calculateAverageRating(Long exerciseId) {
         Exercise exercise = exerciseRepository.findById(exerciseId)
@@ -115,6 +123,31 @@ public class ExerciseService implements IExerciseService {
         exercise.setCompleted(completed); // Mise à jour du statut
         return exerciseRepository.save(exercise);
     }
+    public void reorderExercises(List<Map<String, Integer>> order) {
+        if (order == null || order.isEmpty()) {
+            throw new IllegalArgumentException("Order list cannot be null or empty");
+        }
+
+        for (Map<String, Integer> item : order) {
+            Integer idValue = item.get("id");
+            if (idValue == null) {
+                throw new IllegalArgumentException("Missing 'id' in order item: " + item);
+            }
+
+            Integer newOrder = item.get("order");
+            if (newOrder == null) {
+                throw new IllegalArgumentException("Missing 'order' in order item: " + item);
+            }
+
+            Long id = idValue.longValue();
+            exerciseRepository.findById(id).ifPresent(exercise -> {
+                exercise.setDisplayOrder(newOrder); // Mis à jour pour utiliser displayOrder
+                exerciseRepository.save(exercise);
+            });
+        }
+    }
+
+
     public Rating addRatingToExercise(Long exerciseId, double ratingValue) {
         Exercise exercise = exerciseRepository.findById(exerciseId)
                 .orElseThrow(() -> new RuntimeException("Exercise not found with id " + exerciseId));

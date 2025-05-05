@@ -3,12 +3,17 @@ package tn.esprit.tic.se.spr01.Exercises.Controller;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.tic.se.spr01.Exercises.Entities.Exercise;
 import tn.esprit.tic.se.spr01.Exercises.Entities.Rating;
+import tn.esprit.tic.se.spr01.Exercises.Repository.ExerciseRepository;
 import tn.esprit.tic.se.spr01.Exercises.Service.ExerciseService;
 import tn.esprit.tic.se.spr01.Exercises.Service.IExerciseService;
 
@@ -23,6 +28,8 @@ public class ExerciseController {
 
     @Autowired
     private ExerciseService exerciseService;
+    @Autowired
+    ExerciseRepository exerciseRepository;
 
     @PostMapping("/create/{teamId}/{coachid}")
     public ResponseEntity<?> create(
@@ -81,6 +88,17 @@ public class ExerciseController {
         Map<String, Long> stats = exerciseService.getExerciseStatsByCoach(coachId);
         return ResponseEntity.ok(stats);
     }
+
+    @PostMapping("/reorder")
+    public ResponseEntity<Void> reorderExercises(@RequestBody List<Map<String, Integer>> order) {
+        exerciseService.reorderExercises(order);
+        return ResponseEntity.ok().build();
+    }
+    @GetMapping("/findAll-page")
+    public Page<Exercise> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "6") int size) {
+        return exerciseService.findAll(page, size);
+    }
+
 
 
 

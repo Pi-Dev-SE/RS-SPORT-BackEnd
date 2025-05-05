@@ -2,6 +2,7 @@ package tn.esprit.tic.se.spr01.TacticalBoard.Entites;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
 
@@ -11,8 +12,11 @@ public class PlayerIcon implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idIcon;
-    private String role;       // Position du joueur (ex: "Attaquant", "Défenseur")
+    @NotNull
+    private String role;
+    @NotNull// Position du joueur (ex: "Attaquant", "Défenseur")
     private Integer jerseyNumber; // Numéro de maillot du joueur
+    @NotNull
     private String jerseyColor;  // Add jerseyColor field
 
 
@@ -71,4 +75,6 @@ public class PlayerIcon implements Serializable {
     public void setTacticsBoard(TacticsBoard tacticsBoard) {
         this.tacticsBoard = tacticsBoard;
     }
+
+
 }

@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/coaches")
+@RequestMapping("/coach")
 public class CoachController {
 
     final

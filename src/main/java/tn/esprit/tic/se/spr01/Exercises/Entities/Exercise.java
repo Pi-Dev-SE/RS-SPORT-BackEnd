@@ -46,6 +46,8 @@ public class Exercise implements Serializable {
 
     private String image;
     private String videoUrl;
+    private Integer displayOrder; // Champ pour l'ordre
+
 
     @Enumerated(EnumType.STRING)
     private Visibility visibility;

@@ -1,6 +1,7 @@
 package tn.esprit.tic.se.spr01.VideoandStrategic.services;
 
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 import tn.esprit.tic.se.spr01.VideoandStrategic.entities.Post;
 
@@ -17,7 +18,6 @@ public interface PostService {
     List<Post> getAllPosts();
     List<Post> searchByName(String clubName);
 
-
-
+    Page<Post> getAllPostsPaginated(Pageable pageable);
 
 }

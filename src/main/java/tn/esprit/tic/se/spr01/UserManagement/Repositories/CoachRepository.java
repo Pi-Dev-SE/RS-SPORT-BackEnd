@@ -12,6 +12,8 @@ import java.util.Optional;
 @Repository
 public interface CoachRepository extends JpaRepository<Coach, Long> {
 
+
     @Query("SELECT c FROM Coach c WHERE c.club.clubId = :clubId")
     List<Coach> findCoachByClubId(Integer clubId);
 }
+
