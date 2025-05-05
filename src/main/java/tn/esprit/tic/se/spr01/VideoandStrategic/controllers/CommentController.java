@@ -2,16 +2,12 @@ package tn.esprit.tic.se.spr01.VideoandStrategic.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.http.HttpStatus;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import tn.esprit.tic.se.spr01.VideoandStrategic.dto.CommentDto;
 import tn.esprit.tic.se.spr01.VideoandStrategic.entities.Comment;
-
 import tn.esprit.tic.se.spr01.VideoandStrategic.services.CommentService;
-
 import tn.esprit.tic.se.spr01.VideoandStrategic.services.CommentServiceImpl;
 
 
@@ -20,7 +16,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/comments")
 @RequiredArgsConstructor
-
 @CrossOrigin("*")
 public class CommentController {
 
@@ -51,5 +46,4 @@ public class CommentController {
     public void deleteComment(@PathVariable Long id) {
         commentService.deleteComment(id);
     }
-
 }

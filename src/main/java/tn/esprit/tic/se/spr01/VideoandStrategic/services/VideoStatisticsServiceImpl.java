@@ -3,7 +3,7 @@ package tn.esprit.tic.se.spr01.VideoandStrategic.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import tn.esprit.tic.se.spr01.VideoandStrategic.dto.VideoStatisticsDto;
 import tn.esprit.tic.se.spr01.VideoandStrategic.entities.VideoAnalysis;
 import tn.esprit.tic.se.spr01.VideoandStrategic.entities.VideoStatistics;
 import tn.esprit.tic.se.spr01.VideoandStrategic.repositories.VideoAnalysisRepository;
@@ -52,6 +52,5 @@ public class VideoStatisticsServiceImpl implements VideoStatisticsService {
     public List<VideoStatistics> getAll() {
         return videoStatisticsRepository.findAll();
     }
-
 
 }

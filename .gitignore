@@ -31,3 +31,14 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+####
+src/main/java/tn/esprit/tic/se/spr01/VideoandStrategic/dto/
+src/main/java/tn/esprit/tic/se/spr01/VideoandStrategic/controllers/VideoAnnotationController.java
+src/main/java/tn/esprit/tic/se/spr01/VideoandStrategic/entities/VideoAnnotation.java
+src/main/java/tn/esprit/tic/se/spr01/VideoandStrategic/entities/AnnotationType.java
+src/main/java/tn/esprit/tic/se/spr01/VideoandStrategic/entities/AnnotationStatus.java
+src/main/java/tn/esprit/tic/se/spr01/VideoandStrategic/repositories/VideoAnnotationRepository.java
+src/main/java/tn/esprit/tic/se/spr01/VideoandStrategic/services/VideoAnnotationService.java
+src/main/java/tn/esprit/tic/se/spr01/VideoandStrategic/services/VideoAnnotationServiceImpl.java.java
