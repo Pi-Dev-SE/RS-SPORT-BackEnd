@@ -16,6 +16,7 @@ import tn.esprit.tic.se.spr01.UserManagement.Entities.Coach;
 import tn.esprit.tic.se.spr01.exceptions.WeatherApiException;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -148,48 +149,58 @@ public class SessionController {
             // Validation des paramètres
             if (city == null || city.trim().isEmpty()) {
                 logger.error("Invalid city parameter: {}", city);
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(null);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
             }
 
             if (date == null || date.equals("undefined")) {
                 logger.error("Invalid date parameter: {}", date);
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(null);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
             }
 
+            // Tentative de parsing de la date avec plusieurs formats
             LocalDate localDate;
-            try {
-                localDate = LocalDate.parse(date);
-            } catch (DateTimeParseException e) {
-                logger.error("Invalid date format: {}. Expected format: yyyy-MM-dd", date, e);
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(null);
+            DateTimeFormatter[] formatters = new DateTimeFormatter[] {
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd"),
+                    DateTimeFormatter.ofPattern("dd/MM/yyyy")
+            };
+
+            boolean parsed = false;
+            for (DateTimeFormatter formatter : formatters) {
+                try {
+                    localDate = LocalDate.parse(date, formatter);
+                    parsed = true;
+
+                    // Vérification de la plage de date
+                    LocalDate today = LocalDate.now();
+                    LocalDate maxFutureDate = today.plusDays(5);
+
+                    if (localDate.isBefore(today)) {
+                        logger.error("Cannot fetch weather data for past date: {}", localDate);
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+                    }
+                    if (localDate.isAfter(maxFutureDate)) {
+                        logger.error("Date {} is beyond the 5-day forecast limit.", localDate);
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+                    }
+
+                    // Appel au service météo
+                    WeatherData weatherData = sessionService.checkWeatherBeforeCreatingSession(city, localDate, localDate);
+                    if (weatherData == null) {
+                        logger.error("No weather data available for city: {} on date: {}", city, localDate);
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+                    }
+
+                    return ResponseEntity.ok(weatherData);
+
+                } catch (DateTimeParseException ignored) {
+                    // continue to next format
+                }
             }
 
-            // Vérifier que la date est dans le futur et dans une plage acceptable
-            LocalDate today = LocalDate.now();
-            LocalDate maxFutureDate = today.plusDays(5);
-
-            if (localDate.isBefore(today)) {
-                logger.error("Cannot fetch weather data for past date: {}", localDate);
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(null);
+            if (!parsed) {
+                logger.error("Invalid date format: {}. Expected format: yyyy-MM-dd or dd/MM/yyyy", date);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
             }
-            if (localDate.isAfter(maxFutureDate)) {
-                logger.error("Date {} is beyond the 5-day forecast limit.", localDate);
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(null);
-            }
-
-            // Puisque startDate et endDate doivent être le même jour, on utilise la même date
-            WeatherData weatherData = sessionService.checkWeatherBeforeCreatingSession(city, localDate, localDate);
-            if (weatherData == null) {
-                logger.error("No weather data available for city: {} on date: {}", city, localDate);
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-            }
-
-            return ResponseEntity.ok(weatherData);
 
         } catch (IllegalArgumentException e) {
             logger.error("Invalid input for weather check: {}", e.getMessage());
@@ -201,6 +212,9 @@ public class SessionController {
             logger.error("Unexpected error during weather check: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
+
+        // Par sécurité (ne devrait jamais être atteint)
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
     }
 
     @GetMapping("/test-email")

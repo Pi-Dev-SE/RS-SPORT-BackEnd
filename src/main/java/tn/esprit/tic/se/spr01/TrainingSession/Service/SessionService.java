@@ -36,6 +36,7 @@ import tn.esprit.tic.se.spr01.exceptions.WeatherApiException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -341,6 +342,44 @@ public class SessionService implements ISessionService {
         return null;
     }
 
+    private String buildHtmlWeatherEmailContent(Coach coach, String city, LocalDate date, WeatherData weatherData) {
+        return """
+        <div style='font-family: Segoe UI, Arial, sans-serif; background-color: #f4f6f8; padding: 30px; color: #333;'>
+          <div style='max-width: 600px; margin: auto; background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); overflow: hidden;'>
+            <div style='background-color: #007BFF; padding: 25px; text-align: center;'>
+              <h2 style='color: white; margin: 0;'>🌤️ Daily Weather Update - %s</h2>
+            </div>
+            <div style='padding: 35px 40px;'>
+              <p style='font-size: 16px;'>Dear Coach %s,</p>
+              <p style='font-size: 16px; margin-bottom: 25px;'>Here is the weather forecast for your city <strong>%s</strong> on <strong>%s</strong>:</p>
+              <div style='background-color: #f0f2f5; border-left: 4px solid #007BFF; padding: 20px; margin: 20px 0; border-radius: 4px;'>
+                <ul style='list-style-type: none; padding: 0; margin: 0; line-height: 2;'>
+                  <li><strong style='color: #007BFF;'>🌡️ Temperature:</strong> %.1f°C</li>
+                  <li><strong style='color: #007BFF;'>☁️ Condition:</strong> %s</li>
+                  <li><strong style='color: #007BFF;'>🌧️ Precipitation:</strong> %.0f%%</li>
+                  <li><strong style='color: #007BFF;'>✅ Recommendation:</strong> %s</li>
+                </ul>
+              </div>
+              <p style='margin-top: 25px; font-size: 16px;'>Please take the necessary precautions for your training session.</p>
+              <div style='text-align: center; margin: 35px 0;'>
+                <a href='http://localhost:4200' style='display: inline-block; background-color: #007BFF; color: white; padding: 14px 28px; border-radius: 30px; text-decoration: none; font-weight: bold; font-size: 16px; box-shadow: 0 2px 5px rgba(0,123,255,0.3);'>View Dashboard</a>
+              </div>
+            </div>
+            <div style='background-color: #f0f0f0; padding: 18px; text-align: center; font-size: 13px; color: #777;'>
+              This email was sent automatically. Please do not reply to it.<br>© 2025 Training Management System
+            </div>
+          </div>
+        </div>
+        """.formatted(
+                date, coach.getFirstname(), city, date,
+                weatherData.getTemperature(),
+                weatherData.getCondition(),
+                weatherData.getPrecipitationProbability() * 100,
+                weatherData.getRecommendation()
+        );
+    }
+
+
     @Scheduled(cron = "0 * * * * ?")
     @Transactional
     public void autoRescheduleSessionsBasedOnWeather() {
@@ -502,7 +541,9 @@ public class SessionService implements ISessionService {
                         weatherData.getRecommendation()
                 );
 
-                notificationService.sendEmail(email, subject, message);
+                String htmlContent = buildHtmlWeatherEmailContent(coach, city, today, weatherData);
+                notificationService.sendHtmlEmail(email, subject, htmlContent);
+
                 reportBuilder.append(String.format("Sent weather notification to coach ID: %d (%s) for city: %s.\n", coach.getId(), coach.getFirstname(), city));
 
             } catch (Exception e) {
@@ -873,6 +914,7 @@ public class SessionService implements ISessionService {
         session.setStartDate(date);
         session.setEndDate(date);
         session.setObjective("Pending weather approval for " + city);
+        session.setTime(LocalTime.of(10, 0)); // par exemple 10h00
         session.setSessionStatus(SessionStatus.SCHEDULED);
         session.setPlayerAvailability(PlayerAvailability.AVAILABLE);
         Session savedSession = sessionRepository.save(session);
