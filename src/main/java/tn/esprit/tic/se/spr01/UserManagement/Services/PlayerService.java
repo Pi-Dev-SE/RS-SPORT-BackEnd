@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tn.esprit.tic.se.spr01.TeamandPlayer.entities.Club;
+import tn.esprit.tic.se.spr01.TeamandPlayer.repositories.ClubRepository;
 import tn.esprit.tic.se.spr01.UserManagement.DTO.PlayerDto;
 import tn.esprit.tic.se.spr01.UserManagement.DTO.UserDto;
 import tn.esprit.tic.se.spr01.UserManagement.Entities.Player;
@@ -23,7 +25,8 @@ public class PlayerService implements iPlayerService {
 
     @Autowired
     PlayerRepository playerRepository;
-
+    @Autowired
+    private ClubRepository clubRepository;
 
     // Create
     @Override
@@ -54,7 +57,7 @@ public class PlayerService implements iPlayerService {
         existingPlayer.setDateOfBirth(player.getDateOfBirth());
         existingPlayer.setEnabled(player.isEnabled());
         existingPlayer.setAccountLocked(player.isAccountLocked());
-        existingPlayer.setRole(player.getRole());
+        existingPlayer.setPosition(player.getPosition());
         existingPlayer.setJerseyNumber(player.getJerseyNumber());
         existingPlayer.setHealthStatus(player.getHealthStatus());
         return playerRepository.save(existingPlayer);
@@ -67,6 +70,33 @@ public class PlayerService implements iPlayerService {
             throw new EntityNotFoundException("Player not found");
         }
         playerRepository.deleteById(id);
+    }
+
+
+    @Override
+    public Object getPlayers() {
+        return playerRepository.findAll();
+    }
+
+    @Override
+    public List<Player> getPlayersByClubId(Integer clubId) {
+        try {
+            return playerRepository.findPlayersByClubId(clubId);
+        } catch (Exception e) {
+            log.error("Error retrieving players by club ID: {}", clubId, e);
+            throw new RuntimeException("Failed to retrieve players for club: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public List<Player> getUnassignedPlayersByClub(int clubId) {
+        // Find the club by ID
+        Club club = clubRepository.findById(clubId)
+                .orElseThrow(() -> new RuntimeException("Club not found with ID: " + clubId));
+
+        List<Player> players = playerRepository.findByClubAndTeamIsNull(club);
+
+        return players;
     }
 
 }

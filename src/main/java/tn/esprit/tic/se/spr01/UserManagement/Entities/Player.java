@@ -10,6 +10,7 @@ import lombok.*;
 import tn.esprit.tic.se.spr01.TacticalBoard.Entites.Position;
 import tn.esprit.tic.se.spr01.TacticalBoard.Entites.TacticsBoard;
 import tn.esprit.tic.se.spr01.TeamandPlayer.entities.Club;
+import tn.esprit.tic.se.spr01.TeamandPlayer.entities.PlayerStatistics;
 import tn.esprit.tic.se.spr01.TeamandPlayer.entities.Team;
 import tn.esprit.tic.se.spr01.UserManagement.Entities.User;
 
@@ -30,8 +31,10 @@ import java.util.List;
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 
 public class Player  extends User implements Serializable {
-    private String role;// Position du joueur (ex: "Attaquant", "Défenseur")
+    private String position;
     private Integer jerseyNumber;
+    private String playerImage;
+
     @Enumerated(EnumType.STRING)
     private TypeStatusHealth healthStatus;
     @OneToMany(mappedBy = "player",fetch = FetchType.EAGER)
@@ -51,17 +54,20 @@ public class Player  extends User implements Serializable {
     @JsonIgnore
     private Team team;
 
-
-    public String getRole() {
-        return role;
-    }
+    @OneToMany(mappedBy = "player", cascade = CascadeType.ALL)
+    private List<PlayerStatistics> statistics;
 
 
+//    public String getRole() {
+//        return role;
+//    }
 
 
-    public void setRole(String role) {
-        this.role = role;
-    }
+
+
+//    public void setRole(String role) {
+//        this.role = role;
+//    }
 
 
 

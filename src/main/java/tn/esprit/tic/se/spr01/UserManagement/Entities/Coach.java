@@ -1,6 +1,7 @@
 package tn.esprit.tic.se.spr01.UserManagement.Entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import tn.esprit.tic.se.spr01.Exercises.Entities.Exercise;
@@ -18,9 +19,13 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @DiscriminatorValue("COACH")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+
 public class Coach extends User implements Serializable {
     private String specializationCoach;
     private String diplome;
+    private String coachImage;
+
     @OneToMany(mappedBy = "coach")
     private Set<TacticsBoard> tacticsBoards;
 
@@ -28,7 +33,7 @@ public class Coach extends User implements Serializable {
     private Set<Exercise> exercises ;
 
     @ManyToOne(fetch = FetchType.LAZY)
-
+    @JsonIgnore
     Club club;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)  // This will apply to updates (not save)

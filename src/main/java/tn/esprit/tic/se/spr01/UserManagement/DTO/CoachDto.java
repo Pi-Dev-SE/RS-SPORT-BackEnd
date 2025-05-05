@@ -1,37 +1,49 @@
 package tn.esprit.tic.se.spr01.UserManagement.DTO;
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import tn.esprit.tic.se.spr01.UserManagement.Entities.Coach;
 
-import java.io.Serializable;
+import java.time.LocalDate;
 
-/**
- * DTO for {@link tn.esprit.tic.se.spr01.UserManagement.Entities.Coach}
- */
-@Getter
-public class CoachDto extends UserDto{
-        @NotBlank(message = "Specialization is required")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class CoachDTO {
+        private int id;
+        private String firstname;
+        private String lastname;
+        private String email;
+        private LocalDate dateOfBirth;
+        private boolean enabled;
+        private boolean accountLocked;
         private String specializationCoach;
-
-        @NotBlank(message = "Diploma is required")
         private String diplome;
+        private Long clubId;
+        private String clubName;
 
+        public static CoachDTO fromEntity(Coach coach) {
+                CoachDTO dto = new CoachDTO();
+                dto.setId(coach.getId().intValue());
 
-        public String getSpecializationCoach() {
-                return specializationCoach;
+                dto.setFirstname(coach.getFirstname());
+                dto.setLastname(coach.getLastname());
+                dto.setEmail(coach.getEmail());
+                dto.setDateOfBirth(coach.getDateOfBirth());
+                dto.setEnabled(coach.isEnabled());
+                dto.setAccountLocked(coach.isAccountLocked());
+                dto.setSpecializationCoach(coach.getSpecializationCoach());
+                dto.setDiplome(coach.getDiplome());
+
+                // Only set club properties if club is not null
+                if (coach.getClub() != null) {
+                        dto.setClubId((long) coach.getClub().getClubId());
+                        dto.setClubName(coach.getClub().getClubName());
+                }
+
+                return dto;
         }
-
-        public String getDiplome() {
-                return diplome;
-        }
-
-        public void setSpecializationCoach(String specializationCoach) {
-                this.specializationCoach = specializationCoach;
-        }
-
-        public void setdiplome(String diplome) {
-                this.diplome = diplome;
-        }
-
-
 }
