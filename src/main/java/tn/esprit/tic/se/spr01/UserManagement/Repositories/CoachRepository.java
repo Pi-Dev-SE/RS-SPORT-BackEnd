@@ -11,6 +11,4 @@ import java.util.Optional;
 @Repository
 public interface CoachRepository extends JpaRepository<Coach, Long> {
 
-    @Query("SELECT c FROM Coach c WHERE c.id = :id")
-    Optional<Coach> findById(@Param("id") Integer id);
 }
