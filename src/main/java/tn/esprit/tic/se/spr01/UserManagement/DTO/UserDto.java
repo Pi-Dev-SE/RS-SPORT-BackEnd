@@ -33,11 +33,12 @@ public class UserDto{
 
 
 
-    public static tn.esprit.tic.se.spr01.UserManagement.DTO.UserDto toDto(User entity) {
+    public static UserDto toDto(User entity) {
         if (entity == null) {
             return null;
 
         }
+
         return tn.esprit.tic.se.spr01.UserManagement.DTO.UserDto.builder()
                 .firstname(entity.getFirstname())
                 .lastName(entity.getLastname())
