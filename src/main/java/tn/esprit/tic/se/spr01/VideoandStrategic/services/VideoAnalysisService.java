@@ -14,5 +14,4 @@ public interface VideoAnalysisService {
     VideoAnalysis getById(Long id);
     List<VideoAnalysis> getAll();
     List<VideoAnalysis> searchByName(String clubName);
-
 }

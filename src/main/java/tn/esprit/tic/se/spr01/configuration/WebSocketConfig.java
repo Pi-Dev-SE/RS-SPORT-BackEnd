@@ -1,3 +1,4 @@
+
 package tn.esprit.tic.se.spr01.configuration;
 
 import org.springframework.context.annotation.Configuration;
@@ -11,16 +12,21 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
+    public void configureMessageBroker(MessageBrokerRegistry registry) {
+        registry.enableSimpleBroker("/topic", "/user"); // Clients subscribe to /topic/xyz
+        registry.setApplicationDestinationPrefixes("/app"); // Clients send to /app/xyz
+        registry.setUserDestinationPrefix("/user");
+    }
+
+
+
+
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // Configuration de l'endpoint WebSocket avec la gestion CORS
         registry.addEndpoint("/ws")
-                .setAllowedOrigins("http://localhost:4200") // Autoriser les connexions depuis Angular
+                .setAllowedOrigins("*") // Autoriser les connexions depuis Angular
                 .withSockJS(); // SockJS pour la gestion de la reconnexion
     }
 
-    @Override
-    public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/topic"); // Préfixe pour les messages entrants
-        config.setApplicationDestinationPrefixes("/app"); // Préfixe pour les messages sortants
-    }
+
 }

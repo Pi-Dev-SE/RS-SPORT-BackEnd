@@ -31,12 +31,12 @@ public class VideoAnnotation {
     @Enumerated(EnumType.STRING)
     private AnnotationType annotationType;
 
-   /* @Enumerated(EnumType.STRING)
-    private AnnotationStatus Status;
+    /* @Enumerated(EnumType.STRING)
+     private AnnotationStatus Status;
 
-    @Enumerated(EnumType.STRING)
-    private AnnotationType annotationType;
-*/
+     @Enumerated(EnumType.STRING)
+     private AnnotationType annotationType;
+ */
     @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     private VideoAnalysis videoAnalysisA;

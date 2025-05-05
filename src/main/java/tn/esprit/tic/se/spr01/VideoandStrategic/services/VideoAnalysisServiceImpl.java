@@ -1,6 +1,5 @@
 package tn.esprit.tic.se.spr01.VideoandStrategic.services;
 
-
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,7 +9,6 @@ import tn.esprit.tic.se.spr01.VideoandStrategic.entities.VideoAnalysis;
 import tn.esprit.tic.se.spr01.VideoandStrategic.entities.VideoAnalysisType;
 import tn.esprit.tic.se.spr01.VideoandStrategic.entities.VideoStatus;
 import tn.esprit.tic.se.spr01.VideoandStrategic.repositories.VideoAnalysisRepository;
-
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -109,5 +107,4 @@ public class VideoAnalysisServiceImpl implements VideoAnalysisService {
     public List<VideoAnalysis> searchByName(String title) {
         return videoAnalysisRepository.findAllByTitleContaining(title);
     }
-
 }

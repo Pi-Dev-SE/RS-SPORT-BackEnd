@@ -4,8 +4,16 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import tn.esprit.tic.se.spr01.TacticalBoard.DTO.TacticsBoardDto;
+import tn.esprit.tic.se.spr01.TacticalBoard.DTO.TacticsEngagementData;
+import tn.esprit.tic.se.spr01.TacticalBoard.DTO.TacticsMonthlyActivity;
+import tn.esprit.tic.se.spr01.TacticalBoard.DTO.TacticsPlayerCount;
 import tn.esprit.tic.se.spr01.TacticalBoard.Entites.PlayerIcon;
 import tn.esprit.tic.se.spr01.TacticalBoard.Entites.Position;
 import tn.esprit.tic.se.spr01.TacticalBoard.Entites.TacticsBoard;
@@ -57,9 +65,19 @@ public class TacticsBoardService implements iTacticsBoardService{
                 .orElseThrow(() -> new EntityNotFoundException("TacticsBoard not found with id: " + id));
     }
 
-    public List<TacticsBoard> getAllBoard() {
-        return tacticsBoardRepository.findAll();
+    public Page<TacticsBoard> getAllBoardsPaginated(int page, int size, String search, String sort) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        if ("asc".equalsIgnoreCase(sort)) {
+            pageable = PageRequest.of(page, size, Sort.by("createdAt").ascending());
+        }
+
+        if (search != null && !search.isEmpty()) {
+            return tacticsBoardRepository.findByNameContainingIgnoreCase(search, pageable);
+        } else {
+            return tacticsBoardRepository.findAll(pageable);
+        }
     }
+
 
     @Override
     public List<TacticsBoard> getBoardByDateRange(LocalDate startDate, LocalDate endDate) {
@@ -112,12 +130,12 @@ public class TacticsBoardService implements iTacticsBoardService{
 //        tacticsBoard.setAwayTeam(team);
 //        tacticsBoardRepository.save(tacticsBoard);
 //    }
-    @Override
-    public void updateFormation(Long tacticsBoardId, Map<String, Position> formation) {
-        TacticsBoard tacticsBoard = tacticsBoardRepository.findById(tacticsBoardId).orElseThrow(() -> new RuntimeException("TacticsBoard not found"));
-        tacticsBoard.setFormation(formation);
-        tacticsBoardRepository.save(tacticsBoard);
-    }
+//    @Override
+//    public void updateFormation(Long tacticsBoardId, Map<String, Position> formation) {
+//        TacticsBoard tacticsBoard = tacticsBoardRepository.findById(tacticsBoardId).orElseThrow(() -> new RuntimeException("TacticsBoard not found"));
+//        tacticsBoard.setFormation(formation);
+//        tacticsBoardRepository.save(tacticsBoard);
+//    }
     @Override
     public PlayerIcon addPlayer(PlayerIcon player, Long tacticsBoardId) {
         TacticsBoard tacticsBoard = tacticsBoardRepository.findById(tacticsBoardId)
@@ -135,11 +153,10 @@ public class TacticsBoardService implements iTacticsBoardService{
     }
 
     @Override
-    public void deletePlayer(Long playerId, Long tacticsBoardId) {
+    public void deletePlayer(Integer jerseyNumber, Long tacticsBoardId) {
         TacticsBoard tacticsBoard = tacticsBoardRepository.findById(tacticsBoardId)
                 .orElseThrow(() -> new RuntimeException("TacticsBoard not found"));
-        PlayerIcon player = playerRepository.findById(playerId)
-                .orElseThrow(() -> new RuntimeException("Player not found"));
+        PlayerIcon player = playerRepository.findByJerseyNumber(jerseyNumber) ;
         tacticsBoard.getPlayers().remove(player);
         playerRepository.delete(player);
         tacticsBoardRepository.save(tacticsBoard);
@@ -152,14 +169,61 @@ public class TacticsBoardService implements iTacticsBoardService{
         PlayerIcon existingPlayer = playerRepository.findById(player.getIdIcon())
                 .orElseThrow(() -> new RuntimeException("Player not found"));
 
-        existingPlayer.setJerseyNumber(player.getJerseyNumber());
-        existingPlayer.setJerseyColor(player.getJerseyColor());
-//        existingPlayer.setPositionX(player.getPositionX());
-//        existingPlayer.setPositionY(player.getPositionY());
-        existingPlayer.setRole(player.getRole());
-        existingPlayer.setPosition(player.getPosition());
-//        existingPlayer.setTeam(player.getTeam());
+        if (player.getJerseyNumber() != null) {
+            existingPlayer.setJerseyNumber(player.getJerseyNumber());
+        }
+        if (player.getJerseyColor() != null) {
+            existingPlayer.setJerseyColor(player.getJerseyColor());
+        }
+        if (player.getRole() != null) {
+            existingPlayer.setRole(player.getRole());
+        }
+        if (player.getPosition() != null) {
+            existingPlayer.setPosition(player.getPosition());
+        }
         existingPlayer.setTacticsBoard(tacticsBoard);
         return playerRepository.save(existingPlayer);
     }
+
+    @Override
+    public TacticsEngagementData getEngagementData() {
+        // Récupérer le nombre total de tableaux tactiques
+        long totalBoards = tacticsBoardRepository.count();
+
+        // Récupérer le nombre de tableaux modifiés (version > 0)
+        long modifiedBoards = tacticsBoardRepository.countByVersionGreaterThan(0L);
+
+        // Calculer le nombre de tableaux non modifiés
+        long unchangedBoards = totalBoards - modifiedBoards;
+
+        return new TacticsEngagementData((int) modifiedBoards, (int) unchangedBoards);
+    }
+
+    @Override
+    public List<TacticsMonthlyActivity> getMonthlyActivityData() {
+        // Récupérer les données d'activité mensuelle depuis le repository
+        return tacticsBoardRepository.getMonthlyActivityData();
+    }
+
+    @Override
+    public List<TacticsPlayerCount> getPlayerCountByBoard() {
+        // Récupérer le nombre de joueurs par tableau tactique
+        return tacticsBoardRepository.getPlayerCountByBoard();
+    }
+
+//    @Scheduled(cron = "0 0 0 * * *")
+//    public void deleteEmptyTacticsBoards() {
+//        List<TacticsBoard> emptyBoards = tacticsBoardRepository.findEmptyBoards();
+//
+//        if (!emptyBoards.isEmpty()) {
+//            log.info("Suppression de {} Tactics Boards vides : {}",
+//                    emptyBoards.size(),
+//                    emptyBoards.stream().map(TacticsBoard::getIdTactic).toList());
+//            tacticsBoardRepository.deleteAll(emptyBoards);
+//        } else {
+//            log.info("Aucun Tactics Board vide à supprimer");
+//        }
+//    }
+
+
 }
