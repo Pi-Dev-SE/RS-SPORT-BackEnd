@@ -1,5 +1,6 @@
 package tn.esprit.tic.se.spr01.TeamandPlayer.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -20,12 +21,23 @@ import java.util.List;
 public class GameSheet implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int matchSheetId;
-    float possesionPercent;
-    int goal;
-    int shotOnGoal ;
-    String fouls ;
-    float notes ;
+    int gameSheetId;
+
+    @Column(name = "home_possession_percent")
+    float homepossessionPercent;
+    @Column(name = "away_possession_percent")
+    float awaypossessionPercent;
+
+    int homegoal;
+    int awaygoal;
+    int homeshotOnGoal ;
+    int awayshotOnGoal ;
+
+    String homefouls ;
+    String awayfouls ;
+
+    float homenotes ;
+    float awaynotes ;
 
     @ManyToOne
     @JoinColumn(name = "home_team_id")
@@ -35,7 +47,8 @@ public class GameSheet implements Serializable {
     @JoinColumn(name = "away_team_id")
     private Team awayTeam;
 
-    @OneToOne(mappedBy="gamesheet")
-    private Game match;
+    @OneToOne
+    @JsonIgnore
+    private Game game;
 
 }

@@ -1,34 +1,50 @@
 
 package tn.esprit.tic.se.spr01.TeamandPlayer.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
+import tn.esprit.tic.se.spr01.TeamandPlayer.dto.TeamStatDto;
 
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
-@RequiredArgsConstructor
-
 public class TeamStat implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int teamstaId;
 
-    float performanceRate ;
-    int tolalWins ;
-    int tolalLoses ;
-    Date date ;
-    int rankinPoints ;
-    
+    float performanceRate;
+    int totalWins;
+    int totalLosses;
+    Date date;
+    int rankingPoints;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "team_id", referencedColumnName = "teamId")
+    @JsonIgnore
+    Team team;
+
+    public static TeamStat toEntity(TeamStatDto dto) {
+        if (dto == null) {
+            return null;
+        }
+        return TeamStat.builder()
+                .teamstaId(dto.getTeamstaId())
+                .performanceRate(dto.getPerformanceRate())
+                .totalWins(dto.getTotalWins())
+                .totalLosses(dto.getTotalLosses())
+                .date(dto.getDate())
+                .rankingPoints(dto.getRankingPoints())
+                .build();
+    }
 }

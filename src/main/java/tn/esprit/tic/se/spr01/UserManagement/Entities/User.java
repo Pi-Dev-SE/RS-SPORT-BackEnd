@@ -29,6 +29,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "dtype", discriminatorType = DiscriminatorType.STRING)
 
@@ -122,6 +123,15 @@ public class User implements Serializable , UserDetails {
 
 
 
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdDate;
+
+    @LastModifiedDate
+    @Column(insertable = false)
+    private LocalDateTime lastModifiedDate;
+
+
     @Override
     public String getUsername() {
         return email;
@@ -149,6 +159,7 @@ public class User implements Serializable , UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 
 
 

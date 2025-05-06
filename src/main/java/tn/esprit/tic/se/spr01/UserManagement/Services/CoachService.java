@@ -1,16 +1,14 @@
 package tn.esprit.tic.se.spr01.UserManagement.Services;
 
 import jakarta.persistence.EntityNotFoundException;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tn.esprit.tic.se.spr01.UserManagement.DTO.CoachDto;
-import tn.esprit.tic.se.spr01.UserManagement.DTO.UserDto;
 import tn.esprit.tic.se.spr01.UserManagement.Entities.Coach;
-import tn.esprit.tic.se.spr01.UserManagement.Entities.User;
 import tn.esprit.tic.se.spr01.UserManagement.Repositories.CoachRepository;
+
+import java.util.List;
 
 @Service
 
@@ -57,5 +55,15 @@ public class CoachService implements iCoachService{
             throw new EntityNotFoundException("Coach not found");
         }
         coachRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Coach> getCoachesByClubId(Integer clubId) {
+        try {
+            return coachRepository.findCoachByClubId(clubId);
+        } catch (Exception e) {
+            log.error("Error retrieving coach by club ID: {}", clubId, e);
+            throw new RuntimeException("Failed to retrieve players for club: " + e.getMessage());
+        }
     }
 }

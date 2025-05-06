@@ -17,4 +17,8 @@ public interface IClubService {
     public void updateCoachClub(Long coachId, Integer newClubId);
     public void deleteClub(Integer clubId);
     public List<Club> getClubsByName(String name);
+    public List<Club> findAllClubs();
+
+    public Club updateClub(Club updatedClub);
+    public Club getClubById(int id);
 }
