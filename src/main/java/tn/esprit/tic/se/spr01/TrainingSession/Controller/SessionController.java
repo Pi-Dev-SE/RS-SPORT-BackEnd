@@ -13,23 +13,28 @@ import tn.esprit.tic.se.spr01.TrainingSession.Entities.WeatherData;
 import tn.esprit.tic.se.spr01.TrainingSession.Service.NotificationService;
 import tn.esprit.tic.se.spr01.TrainingSession.Service.SessionService;
 import tn.esprit.tic.se.spr01.UserManagement.Entities.Coach;
+import tn.esprit.tic.se.spr01.UserManagement.Entities.User;
+import tn.esprit.tic.se.spr01.UserManagement.Entities.UserRole;
 import tn.esprit.tic.se.spr01.exceptions.WeatherApiException;
 
+import java.security.Principal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/api/sessions")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 public class SessionController {
 
     @Autowired
     private SessionService sessionService;
     @Autowired
     private NotificationService notificationService;
+    @Autowired
 
     private static final Logger logger = (Logger) LoggerFactory.getLogger(SessionController.class);
 
@@ -51,12 +56,37 @@ public class SessionController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
+    @PostMapping("/create")
+    public ResponseEntity<Session> createSession(@RequestBody Session session, Principal principal) {
+        try {
+            System.out.println(">>> Création de session avec : " +
+                    "startDate=" + session.getStartDate() +
+                    ", endDate=" + session.getEndDate() +
+                    ", time=" + session.getTime() +
+                    ", objective=" + session.getObjective() +
+                    ", status=" + session.getSessionStatus() +
+                    ", city=" + session.getCity());
 
-    @PostMapping("/create/{coachId}")
-    public ResponseEntity<Session> createSession(@RequestBody Session session, @PathVariable Long coachId) {
-        Session created = sessionService.createSession(session, coachId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+            // Récupère le nom d'utilisateur (email) de l'utilisateur connecté
+            String username = principal.getName();  // Utilisation du nom d'utilisateur (email)
+
+            // Appelle la méthode de service pour créer la session
+            Session createdSession = sessionService.createSession(session, username);
+
+            // Retourne la session créée avec un statut HTTP 201 (Created)
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdSession);
+        } catch (RuntimeException e) {
+            // Gère le cas où l'utilisateur n'est pas autorisé à créer une session
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);  // Code 403 pour interdit
+        } catch (Exception e) {
+            // Gère toutes les autres erreurs
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
+
+
+
+
 
 
     @DeleteMapping("deleteById/{id}")
@@ -92,11 +122,13 @@ public class SessionController {
         }
     }
 
-    @GetMapping("GetAllCoaches")
+    @GetMapping("/GetAllCoaches")
     public ResponseEntity<List<Coach>> getAllCoaches() {
         List<Coach> coaches = sessionService.getAllCoaches();
         return ResponseEntity.ok(coaches);
     }
+
+
 
     @PutMapping("assign-exercises")
     public ResponseEntity<Session> assignExercisesToSession(
@@ -229,32 +261,26 @@ public class SessionController {
         }
     }
 
-    @GetMapping("/analyze-coach-performance/{coachId}")
-    public ResponseEntity<String> analyzeCoachPerformance(
-            @PathVariable("coachId") Long coachId,
-            @RequestParam("startDate") @DateTimeFormat(pattern = "dd/M/yyyy") LocalDate startDate,
-            @RequestParam("endDate") @DateTimeFormat(pattern = "dd/M/yyyy") LocalDate endDate) {
+    @GetMapping("/analyze")
+    public ResponseEntity<String> analyzePerformance(
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) String startDateStr,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) String endDateStr
+    ) {
         try {
-            // Validate dates
-            if (startDate.isAfter(endDate)) {
-                logger.error("startDate {} must be before endDate {}", startDate, endDate);
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("startDate must be before endDate");
-            }
+            startDateStr = startDateStr.trim().replaceAll("\\r|\\n", "");  // Remove any line breaks
+            endDateStr = endDateStr.trim().replaceAll("\\r|\\n", "");  // Remove any line breaks
 
-            // Delegate to service for analysis
-            String report = sessionService.analyzeCoachPerformance(coachId, startDate, endDate);
+            LocalDate startDate = LocalDate.parse(startDateStr);
+            LocalDate endDate = LocalDate.parse(endDateStr);
+
+            String report = sessionService.analyzePerformance(startDate, endDate);
             return ResponseEntity.ok(report);
-
-        } catch (IllegalArgumentException e) {
-            logger.error("Invalid input for coach performance analysis: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        } catch (RuntimeException e) {
-            logger.error("Error analyzing coach performance for coach ID: {}", coachId, e);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (IllegalArgumentException | NullPointerException e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         } catch (Exception e) {
-            logger.error("Unexpected error during coach performance analysis: {}", e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred.");
         }
     }
+
+
 }

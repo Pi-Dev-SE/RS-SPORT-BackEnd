@@ -95,7 +95,8 @@ public class ExerciseController {
         return ResponseEntity.ok().build();
     }
     @GetMapping("/findAll-page")
-    public Page<Exercise> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "6") int size) {
+    public Page<Exercise> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return exerciseService.findAll(page, size);
     }
 

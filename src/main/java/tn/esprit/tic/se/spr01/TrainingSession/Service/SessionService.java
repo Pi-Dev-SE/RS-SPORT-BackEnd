@@ -28,18 +28,20 @@ import tn.esprit.tic.se.spr01.TrainingSession.Repository.SessionRepository;
 import tn.esprit.tic.se.spr01.TrainingSession.Repository.TaskReportRepository;
 import tn.esprit.tic.se.spr01.UserManagement.Entities.Coach;
 import tn.esprit.tic.se.spr01.UserManagement.Entities.User;
+import tn.esprit.tic.se.spr01.UserManagement.Entities.UserRole;
 import tn.esprit.tic.se.spr01.UserManagement.Repositories.CoachRepository;
 import tn.esprit.tic.se.spr01.UserManagement.Repositories.UserRepository;
 import tn.esprit.tic.se.spr01.event.WeatherCheckedEvent;
 import tn.esprit.tic.se.spr01.exceptions.WeatherApiException;
 
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.WeekFields;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static java.util.Arrays.stream;
+
 
 @Service
 public class SessionService implements ISessionService {
@@ -106,19 +108,24 @@ public class SessionService implements ISessionService {
         return sessionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Session not found"));
     }
+    public Session createSession(Session session, String username) {
+        // Récupère l'utilisateur connecté par son email (username)
+        User user = userRepository.findByEmail(username).orElse(null);  // Utilisation de findByEmail
 
-    public Session createSession(Session session, Long coachId) {
-        User coach = userRepository.findCoachById(coachId).orElse(null);
-        session.setCoach((Coach) coach);
+        if (user == null || user.getRoleUser() != UserRole.COACH) {
+            throw new RuntimeException("Utilisateur non autorisé. Seul un coach peut créer une session.");
+        }
+
+        // Associe l'utilisateur (coach) à la session
+        session.setCoach((Coach) user);  // Associe l'utilisateur avec le rôle COACH
+
+        // Sauvegarde la session
         return sessionRepository.save(session);
     }
 
+
     public List<Coach> getAllCoaches() {
-        try {
-            return userRepository.findAllCoaches();
-        } catch (Exception e) {
-            return new ArrayList<>();
-        }
+        return coachRepository.findAll();
     }
 
     @Override
@@ -632,34 +639,33 @@ public class SessionService implements ISessionService {
         }
     }
     @Transactional
-    public String analyzeCoachPerformance(Long coachId, LocalDate startDate, LocalDate endDate) {
-        Objects.requireNonNull(coachId, "Coach ID cannot be null");
+    public String analyzePerformance(LocalDate startDate, LocalDate endDate) {
         Objects.requireNonNull(startDate, "Start date cannot be null");
         Objects.requireNonNull(endDate, "End date cannot be null");
         if (startDate.isAfter(endDate)) {
             throw new IllegalArgumentException("Start date must be before end date");
         }
 
-        User coachUser = userRepository.findCoachById(coachId)
-                .orElseThrow(() -> new RuntimeException("No coach found with ID: " + coachId));
-        Coach coach = (Coach) coachUser;
-
-        List<Session> sessions = sessionRepository.findByCoach(coach).stream()
-                .filter(session -> session.getStartDate() != null)
-                .filter(session -> !session.getStartDate().isBefore(startDate) && !session.getStartDate().isAfter(endDate))
+        // On suppose que cette méthode sera appelée dans un contexte où le coach est déjà identifié
+        // par exemple dans un contrôleur où le coach connecté est disponible
+        // Nous modifierons donc le repository pour récupérer toutes les sessions dans la période
+        List<Session> sessions = sessionRepository.findByStartDateBetween(startDate, endDate)
+                .stream()
+                .filter(session -> session != null)
                 .collect(Collectors.toList());
 
+
         if (sessions.isEmpty()) {
-            String message = "No sessions found for Coach ID: " + coachId + " between " + startDate + " and " + endDate;
+            String message = "No sessions found between " + startDate + " and " + endDate;
             logger.info(message);
             return message;
         }
 
         StringBuilder reportBuilder = new StringBuilder();
-        reportBuilder.append("Performance Analysis Report for Coach: ").append(coach.getFirstname())
-                .append(" (ID: ").append(coachId).append(")\n");
+        reportBuilder.append("Performance Analysis Report\n");
         reportBuilder.append("Period: ").append(startDate).append(" to ").append(endDate).append("\n\n");
 
+        // ===== STATISTIQUES DE BASE =====
         int totalSessions = sessions.size();
         long totalExercises = sessions.stream()
                 .mapToLong(session -> session.getExercises().size())
@@ -670,11 +676,13 @@ public class SessionService implements ISessionService {
                 .count();
         double completionRate = totalExercises > 0 ? (double) completedExercises / totalExercises * 100 : 0.0;
 
+        reportBuilder.append("STATISTIQUES GÉNÉRALES:\n");
         reportBuilder.append("Total Sessions: ").append(totalSessions).append("\n");
         reportBuilder.append("Total Exercises: ").append(totalExercises).append("\n");
         reportBuilder.append("Completed Exercises: ").append(completedExercises).append("\n");
         reportBuilder.append("Overall Completion Rate: ").append(String.format("%.2f%%", completionRate)).append("\n\n");
 
+        // ===== ANALYSE PAR TYPE D'EXERCICE =====
         Map<String, Integer> typeDurations = new HashMap<>();
         int totalDuration = 0;
 
@@ -687,7 +695,7 @@ public class SessionService implements ISessionService {
             }
         }
 
-        reportBuilder.append("Exercise Type Distribution (Duration in Minutes):\n");
+        reportBuilder.append("DISTRIBUTION PAR TYPE D'EXERCICE (Durée en Minutes):\n");
         for (Map.Entry<String, Integer> entry : typeDurations.entrySet()) {
             double percentage = totalDuration > 0 ? (double) entry.getValue() / totalDuration * 100 : 0.0;
             reportBuilder.append("- ").append(entry.getKey()).append(": ").append(entry.getValue())
@@ -695,7 +703,11 @@ public class SessionService implements ISessionService {
         }
         reportBuilder.append("\n");
 
+        // ===== TAUX DE COMPLÉTION PAR TYPE =====
         Map<String, Double> typeCompletionRates = new HashMap<>();
+        Map<String, Long> typeCount = new HashMap<>();
+        Map<String, Long> typeCompletedCount = new HashMap<>();
+
         for (String type : typeDurations.keySet()) {
             long exercisesOfType = sessions.stream()
                     .flatMap(session -> session.getExercises().stream())
@@ -708,15 +720,101 @@ public class SessionService implements ISessionService {
                     .count();
             double typeCompletionRate = exercisesOfType > 0 ? (double) completedOfType / exercisesOfType * 100 : 0.0;
             typeCompletionRates.put(type, typeCompletionRate);
+            typeCount.put(type, exercisesOfType);
+            typeCompletedCount.put(type, completedOfType);
         }
 
-        reportBuilder.append("Completion Rates by Exercise Type:\n");
+        reportBuilder.append("TAUX DE COMPLÉTION PAR TYPE D'EXERCICE:\n");
         for (Map.Entry<String, Double> entry : typeCompletionRates.entrySet()) {
-            reportBuilder.append("- ").append(entry.getKey()).append(": ")
-                    .append(String.format("%.2f%%", entry.getValue())).append("\n");
+            String type = entry.getKey();
+            reportBuilder.append("- ").append(type).append(": ")
+                    .append(String.format("%.2f%%", entry.getValue()))
+                    .append(" (").append(typeCompletedCount.get(type)).append("/").append(typeCount.get(type)).append(")\n");
         }
         reportBuilder.append("\n");
 
+        // ===== STATISTIQUES AVANCÉES =====
+
+        // Moyenne d'exercices par session
+        double avgExercisesPerSession = totalSessions > 0 ? (double) totalExercises / totalSessions : 0.0;
+        reportBuilder.append("STATISTIQUES AVANCÉES:\n");
+        reportBuilder.append("- Moyenne d'exercices par session: ").append(String.format("%.2f", avgExercisesPerSession)).append("\n");
+
+        // Durée moyenne par session
+        double avgDurationPerSession = totalSessions > 0 ? (double) totalDuration / totalSessions : 0.0;
+        reportBuilder.append("- Durée moyenne par session: ").append(String.format("%.2f", avgDurationPerSession)).append(" minutes\n");
+
+        // Durée moyenne par exercice
+        double avgDurationPerExercise = totalExercises > 0 ? (double) totalDuration / totalExercises : 0.0;
+        reportBuilder.append("- Durée moyenne par exercice: ").append(String.format("%.2f", avgDurationPerExercise)).append(" minutes\n");
+
+        // Exercice le plus populaire
+        Map<String, Long> exerciseNameCount = sessions.stream()
+                .flatMap(session -> session.getExercises().stream())
+                .collect(Collectors.groupingBy(ex -> ex.getName() != null ? ex.getName() : "Unknown", Collectors.counting()));
+
+        if (!exerciseNameCount.isEmpty()) {
+            String mostPopularExercise = Collections.max(exerciseNameCount.entrySet(), Map.Entry.comparingByValue()).getKey();
+            long mostPopularCount = exerciseNameCount.get(mostPopularExercise);
+            reportBuilder.append("- Exercice le plus utilisé: ").append(mostPopularExercise)
+                    .append(" (").append(mostPopularCount).append(" fois)\n");
+        }
+
+        // Jours de la semaine les plus actifs
+        Map<DayOfWeek, Long> dayOfWeekCount = sessions.stream()
+                .filter(session -> session.getStartDate() != null)
+                .collect(Collectors.groupingBy(session -> session.getStartDate().getDayOfWeek(), Collectors.counting()));
+
+        if (!dayOfWeekCount.isEmpty()) {
+            DayOfWeek mostActiveDay = Collections.max(dayOfWeekCount.entrySet(), Map.Entry.comparingByValue()).getKey();
+            long mostActiveDayCount = dayOfWeekCount.get(mostActiveDay);
+            reportBuilder.append("- Jour de la semaine le plus actif: ").append(mostActiveDay)
+                    .append(" (").append(mostActiveDayCount).append(" sessions)\n");
+
+            reportBuilder.append("- Distribution des sessions par jour:\n");
+            for (DayOfWeek day : DayOfWeek.values()) {
+                long count = dayOfWeekCount.getOrDefault(day, 0L);
+                double percentage = totalSessions > 0 ? (double) count / totalSessions * 100 : 0.0;
+                reportBuilder.append("  • ").append(day).append(": ").append(count)
+                        .append(" (").append(String.format("%.2f%%", percentage)).append(")\n");
+            }
+        }
+        reportBuilder.append("\n");
+
+        // ===== TENDANCES =====
+        reportBuilder.append("TENDANCES:\n");
+
+        // Analyse de l'évolution des taux de complétion par semaine
+        Map<Integer, List<Exercise>> exercisesByWeek = sessions.stream()
+                .filter(session -> session.getStartDate() != null)
+                .flatMap(session -> {
+                    LocalDate date = session.getStartDate();
+                    return session.getExercises().stream()
+                            .map(ex -> new AbstractMap.SimpleEntry<>(date, ex));
+                })
+                .collect(Collectors.groupingBy(
+                        entry -> entry.getKey().get(WeekFields.of(Locale.getDefault()).weekOfYear()),
+                        Collectors.mapping(AbstractMap.SimpleEntry::getValue, Collectors.toList())
+                ));
+
+        if (!exercisesByWeek.isEmpty()) {
+            reportBuilder.append("Évolution du taux de complétion par semaine:\n");
+            List<Integer> sortedWeeks = new ArrayList<>(exercisesByWeek.keySet());
+            Collections.sort(sortedWeeks);
+
+            for (Integer week : sortedWeeks) {
+                List<Exercise> weekExercises = exercisesByWeek.get(week);
+                long weekCompleted = weekExercises.stream().filter(Exercise::isCompleted).count();
+                double weekCompletionRate = weekExercises.size() > 0 ? (double) weekCompleted / weekExercises.size() * 100 : 0.0;
+
+                reportBuilder.append("- Semaine ").append(week).append(": ")
+                        .append(String.format("%.2f%%", weekCompletionRate))
+                        .append(" (").append(weekCompleted).append("/").append(weekExercises.size()).append(")\n");
+            }
+        }
+        reportBuilder.append("\n");
+
+        // ===== RECOMMANDATIONS =====
         List<String> recommendations = new ArrayList<>();
         double technicalCompletion = typeCompletionRates.getOrDefault("TECHNICAL", 0.0);
         double tacticalCompletion = typeCompletionRates.getOrDefault("TACTICAL", 0.0);
@@ -724,64 +822,72 @@ public class SessionService implements ISessionService {
                 typeCompletionRates.getOrDefault("CONDITIONING", 0.0);
 
         if (technicalCompletion < 50) {
-            recommendations.add("Players are struggling with technical exercises (Completion Rate: " +
+            recommendations.add("Les joueurs ont des difficultés avec les exercices techniques (Taux: " +
                     String.format("%.2f%%", technicalCompletion) +
-                    "). Consider adding more skill-focused drills or reducing difficulty.");
+                    "). Envisagez d'ajouter plus d'exercices axés sur les compétences ou de réduire la difficulté.");
         }
         if (tacticalCompletion < 50) {
-            recommendations.add("Tactical exercises have a low completion rate (Completion Rate: " +
+            recommendations.add("Les exercices tactiques ont un faible taux de complétion (Taux: " +
                     String.format("%.2f%%", tacticalCompletion) +
-                    "). Focus on simpler strategies or increase tactical training frequency.");
+                    "). Concentrez-vous sur des stratégies plus simples ou augmentez la fréquence de l'entraînement tactique.");
         }
         if (physicalCompletion > 80 && totalDuration > 0 &&
                 (typeDurations.getOrDefault("PHYSICAL", 0) + typeDurations.getOrDefault("CONDITIONING", 0)) / (double) totalDuration > 0.5) {
-            recommendations.add("High physical exercise completion but too dominant (" +
+            recommendations.add("Taux de complétion élevé pour les exercices physiques mais trop dominants (" +
                     String.format("%.2f%%", (typeDurations.getOrDefault("PHYSICAL", 0) + typeDurations.getOrDefault("CONDITIONING", 0)) / (double) totalDuration * 100) +
-                    " of total duration). Balance with more technical or tactical drills.");
+                    " de la durée totale). Équilibrez avec plus d'exercices techniques ou tactiques.");
         }
         if (completionRate < 60) {
-            recommendations.add("Overall completion rate is low (" + String.format("%.2f%%", completionRate) +
-                    "). Consider reducing intensity or providing additional support to players.");
+            recommendations.add("Le taux de complétion global est faible (" + String.format("%.2f%%", completionRate) +
+                    "). Envisagez de réduire l'intensité ou de fournir un soutien supplémentaire aux joueurs.");
         }
 
-        reportBuilder.append("Recommendations for Future Sessions:\n");
+        // Nouvelles recommandations basées sur les statistiques avancées
+        if (avgExercisesPerSession > 10) {
+            recommendations.add("Les sessions contiennent beaucoup d'exercices (moyenne de " +
+                    String.format("%.1f", avgExercisesPerSession) +
+                    " par session). Envisagez de vous concentrer sur moins d'exercices mais de meilleure qualité.");
+        }
+
+        if (avgDurationPerExercise < 5) {
+            recommendations.add("Les exercices sont très courts (durée moyenne de " +
+                    String.format("%.1f", avgDurationPerExercise) +
+                    " minutes). Envisagez d'augmenter la durée pour un meilleur impact d'entraînement.");
+        }
+
+        if (dayOfWeekCount != null && !dayOfWeekCount.isEmpty()) {
+            boolean isSkewed = false;
+            for (Long count : dayOfWeekCount.values()) {
+                if (count > totalSessions * 0.4) { // Si plus de 40% des sessions sont sur un jour
+                    isSkewed = true;
+                    break;
+                }
+            }
+
+            if (isSkewed) {
+                recommendations.add("La distribution des sessions est très déséquilibrée. Envisagez de répartir les sessions plus uniformément sur la semaine pour un meilleur équilibre d'entraînement.");
+            }
+        }
+
+        reportBuilder.append("RECOMMANDATIONS:\n");
         if (recommendations.isEmpty()) {
-            reportBuilder.append("- No specific recommendations. Performance is balanced.\n");
+            reportBuilder.append("- Aucune recommandation spécifique. La performance est équilibrée.\n");
         } else {
             recommendations.forEach(rec -> reportBuilder.append("- ").append(rec).append("\n"));
         }
 
-        String email = coach.getEmail();
-        if (email != null && !email.trim().isEmpty()) {
-            try {
-                String subject = "Performance Analysis Report - Period: " + startDate + " to " + endDate;
-                String message = reportBuilder.toString();
-                notificationService.sendEmail(email, subject, message);
-                logger.info("Sent performance analysis report to coach {} (ID: {})", email, coachId);
+        // ===== ENREGISTREMENT ET NOTIFICATION =====
+        if (sessions.size() > 0) {
+            // On suppose qu'il y a un système distinct pour envoyer des notifications
+            // Suppression du code spécifique au coach et à l'email
 
-                Notification notification = new Notification();
-                notification.setContent("Performance analysis report generated for period " + startDate + " to " + endDate);
-                notification.setStatus(StatusNotif.SENT);
-                Set<User> users = new HashSet<>();
-                users.add(coach);
-                notification.setUserSet(users);
-                coach.getNotifications().add(notification);
-                notificationRepository.save(notification);
-            } catch (Exception e) {
-                logger.error("Failed to send performance analysis report to coach {} (ID: {}). Cause: {}", email, coachId, e.getMessage());
-            }
-        } else {
-            logger.warn("Cannot send performance analysis report to coach ID: {}. Email is missing or empty.", coachId);
+            TaskReport report = new TaskReport("analyzePerformance", reportBuilder.toString());
+            taskReportRepository.save(report);
+            logger.info("Saved performance analysis report for date range {} to {}", startDate, endDate);
         }
-
-        TaskReport report = new TaskReport("analyzeCoachPerformance", reportBuilder.toString());
-        taskReportRepository.save(report);
-        logger.info("Saved performance analysis report for coach ID: {}", coachId);
 
         return reportBuilder.toString();
     }
-
-
     public static List<Session> getSessionsByCoachAndDateRange(Long coachId, LocalDate startDate, LocalDate endDate) {
         return sessionRepository.findByCoachIdAndStartDateBetween(coachId, startDate, endDate);
     }
