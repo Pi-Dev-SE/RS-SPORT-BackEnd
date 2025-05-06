@@ -9,7 +9,7 @@ public interface ISessionService {
     List<Session> findAll();
     List<Session> delete(long id);
     Session findById(long id);
-     Session createSession(Session session, Long coachId);
+     Session createSession(Session session, String username);
     void addExercisesToSession(Long sessionId, List<Exercise> newExercise); // List au lieu de Set
     Session update(Session session,long id);
 

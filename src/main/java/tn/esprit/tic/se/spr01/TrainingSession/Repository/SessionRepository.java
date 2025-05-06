@@ -9,6 +9,7 @@ import tn.esprit.tic.se.spr01.TrainingSession.Entities.Session;
 import tn.esprit.tic.se.spr01.UserManagement.Entities.Coach;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
